@@ -25,7 +25,7 @@ transitions = [
     {
         "trigger": "trancar",
         "source": StatesPorta.DESTRANCADA,
-        "dest": StatesPorta.TRANCADA,        
+        "dest": StatesPorta.TRANCADA,
     },
 
     {
@@ -45,13 +45,15 @@ transitions = [
 class Porta:
 
     def __init__(self):
-        self.machine = Machine(model = self, states = StatesPorta, transitions = transitions, initial = StatesPorta.TRANCADA, on_exception = 'state_error', send_event = True)
+        self.machine = Machine(model = self, states = StatesPorta, transitions = transitions, initial = StatesPorta.TRANCADA, on_exception = "machine_error", send_event = True)
         self.tentativas_invalidas = 0
     
 
-    def state_error(self, event):
+    def machine_error(self, event):
 
-        self.tentativas_invalidas += 1
+        if event.state.name == "ABERTA" and event.event.name == "trancar": 
+
+            self.tentativas_invalidas += 1
 
         print(event.error)
 
