@@ -1,6 +1,17 @@
 from enum import Enum
 
 
+class StatesPorta(Enum):
+
+    TRANCADA = 0
+    DESTRANCADA = 1
+    ABERTA = 2
+
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class CorEnum(Enum):
 
     NEUTRA = 0,
@@ -33,3 +44,13 @@ class StatusIrrigador(Enum):
 
     def __str__(self) -> str:
         return self.name
+
+
+class TiposDispostivos(Enum):
+
+    CAMERA = 0,
+    IRRIGADOR = 1,
+    LUZ = 2,
+    PERSIANA = 3,
+    PORTA = 4,
+    TOMADA = 5
