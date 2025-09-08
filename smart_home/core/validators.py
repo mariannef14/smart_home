@@ -28,7 +28,7 @@ class CorValidator:
 
     def __set__(self, instance, value):
 
-        if value.upper() in [cor.name for cor in CorEnum]:
+        if value in [cor.name for cor in CorEnum]:
             setattr(instance, self.private_name, value)
 
         else:
@@ -57,3 +57,22 @@ class PorcentagemValidator:
 
     def __set_name__(self, owner, name):
         self. private_name = "_" + name
+
+
+class PotenciaValidator:
+
+    def __get__(self, instance, owner):
+        return getattr(instance, self.private_name)
+
+
+    def __set__(self, instance, value):
+        
+        if value >= 0:
+            setattr(instance, self.private_name, value)
+        
+        else:
+            raise ValueError("Valor da potência deve ser maior que 0 ")
+
+
+    def __set_name__(self, owner, name):
+        self.private_name = "_" + name
