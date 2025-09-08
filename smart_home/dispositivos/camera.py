@@ -1,6 +1,7 @@
 from transitions import Machine
 
 from smart_home.core.dispositivos import StatusCamera, TiposDispostivos
+from smart_home.core.dispositivos import Dispositivo
 
 
 transitions = [
@@ -33,25 +34,25 @@ transitions = [
 ]
 
 
-class Camera:
+class Camera(Dispositivo):
 
-    def __init__(self, id = "", nome = ""):
+    def __init__(self, id:str, nome:str):
         self.machine = Machine(model = self, states = StatusCamera, transitions = transitions, initial = StatusCamera.OFF)
-        self.id = id
-        self.nome = nome
+        super().__init__(id, nome)
+        # self.id = id
+        # self.nome = nome
         self.tipo_dispositivo = TiposDispostivos.CAMERA
     
 
 
 if __name__ == '__main__':
 
-    camera = Camera()
+    camera = Camera("camera_quintal", "camera do quintal")
     camera.ligar()
     print(camera.state)
     camera.gravar()
     print(camera.state)
     camera.parar_gravar()
     print(camera.state)
-    print(camera.bateria)
     camera.desligar()
     print(camera.state)

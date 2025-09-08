@@ -1,22 +1,11 @@
 from transitions import Machine
+from datetime import datetime
+from dataclasses import dataclass, field
+from time import sleep
 
 from smart_home.core.dispositivos import TiposDispostivos
-
-
-class PotenciaValidator:
-
-    def __get__(self, instance, owner):
-        return getattr(instance, self.private_name)
-
-
-    def __set__(self, instance, value):
-        
-        if value >= 0:
-            setattr(instance, self.private_name, value)
-
-
-    def __set_name__(self, owner, name):
-        self.private_name = "_" + name
+from smart_home.core.validators import PotenciaValidator
+from smart_home.core.dispositivos import Dispositivo
 
 
 transitions = [
@@ -24,53 +13,51 @@ transitions = [
     {
         "trigger": "ligar",
         "source": "Off",
-        "dest": "On",
-        "after": "registro_consumo"
+        "dest": "On"
     },
 
     {
         "trigger": "desligar",
         "source": "On",
-        "dest": "Off",
-        "after": "registro_consumo"
+        "dest": "Off"
     }
 
 ]
 
 
-class Tomada:
+@dataclass
+class Tomada(Dispositivo):
 
-    def __init__(self, id, nome, potencia):
+    id:str
+    nome:str
+    tipo:TiposDispostivos = field(init = False, default = TiposDispostivos.TOMADA)
+    potencia_w:int = PotenciaValidator()
+
+
+    def __post_init__(self):
         self.machine = Machine(model = self, states = ["On", "Off"], transitions = transitions, initial = "Off")
-        self.id = id
-        self.nome = nome
-        self.tipo = TiposDispostivos.TOMADA
-        self.potencia_w = PotenciaValidator()
+        self.hora_tomada_ligou = None
         self.consumo_wh = 0
     
-    #TODO: calcular consumo
-    def registro_consumo(self):
-        
-        continue_ = True
-        horas_ligada = 0
 
-        while continue_:
+    def on_enter_On(self):
+        self.hora_tomada_ligou = datetime.now()
 
-            if self.state == "Off":
-                self.consumo_wh = self.potencia_w * (horas_ligada / 60)
-                break
-            
-            # else:
-            #     return registro_consumo()
-            horas_ligada += 30
 
+    def on_enter_Off(self):
+        hora_tomada_desligou = datetime.now()
+        horas_ligada = ((hora_tomada_desligou - self.hora_tomada_ligou).total_seconds() / 3600)
+        self.consumo_wh = abs(self.potencia_w * horas_ligada)
 
 
 if __name__ == '__main__':
     
-    tomada = Tomada(50)
+    tomada = Tomada("tomada_tv", "tomada da tv", 220)
+    print(tomada.potencia_w)
     tomada.ligar()
     print(tomada.state)
+    print(tomada.hora_tomada_ligou)
+    sleep(4)
     tomada.desligar()
     print(tomada.consumo_wh)
     print(tomada.state)

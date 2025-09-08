@@ -1,6 +1,7 @@
 from transitions import Machine
 
 from smart_home.core.dispositivos import StatusIrrigador, TiposDispostivos
+from smart_home.core.dispositivos import Dispositivo
 
 
 transitions = [
@@ -26,12 +27,13 @@ transitions = [
 ]
 
 
-class Irrigador:
+class Irrigador(Dispositivo):
 
-    def __init__(self, id = "", nome = ""):
+    def __init__(self, id:str, nome :str):
         self.machine = Machine(model = self, states = StatusIrrigador, transitions = transitions, initial = StatusIrrigador.DESLIGADO) 
-        self.id = id
-        self.nome = nome
+        super().__init__(id, nome)
+        # self.id = id
+        # self.nome = nome
         self.tipo = TiposDispostivos.IRRIGADOR
         
 
@@ -46,7 +48,7 @@ class Irrigador:
 
 if __name__ == "__main__":
 
-    irrigador = Irrigador()
+    irrigador = Irrigador("irrigador_jardim", "irrigador do jardim")
     irrigador.ligar()
     print(irrigador.state)
     irrigador.irrigar()

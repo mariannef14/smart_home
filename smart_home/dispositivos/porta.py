@@ -1,8 +1,8 @@
-from enum import Enum
 from transitions import Machine
 from transitions.core import MachineError
 
 from smart_home.core.dispositivos import StatesPorta, TiposDispostivos
+from smart_home.core.dispositivos import Dispositivo
 
 
 transitions = [
@@ -33,12 +33,13 @@ transitions = [
 
 ]
 
-class Porta:
+class Porta(Dispositivo):
 
-    def __init__(self, id = "", nome = ""):
+    def __init__(self, id:str, nome:str):
+        super().__init__(id, nome)
         self.machine = Machine(model = self, states = StatesPorta, transitions = transitions, initial = StatesPorta.TRANCADA, on_exception = "machine_error", send_event = True)
-        self.id = id
-        self.nome = nome
+        # self.id = id
+        # self.nome = nome
         self.tipo = TiposDispostivos.PORTA
         self.tentativas_invalidas = 0
     
@@ -52,12 +53,12 @@ class Porta:
         print(event.error)
 
         #TODO: lançar o raise quando estiver com o menu com o tratamento do try
-        # raise MachineError(event)
+        raise MachineError(event)
         
 
 if __name__ == '__main__':
 
-    porta = Porta()
+    porta = Porta("porta_sala", "porta da sala")
     porta.destrancar()
     print("Status porta", porta.state)
     porta.abrir()

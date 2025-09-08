@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 
 from smart_home.core.validators import PorcentagemValidator
 from smart_home.core.dispositivos import TiposDispostivos
+from smart_home.core.dispositivos import Dispositivo
 
 
 transitions = [
@@ -32,15 +33,15 @@ transitions = [
 
 
 @dataclass
-class Persiana:
+class Persiana(Dispositivo):
 
+    id:str
+    nome:str
     porcentagem_aberta:int = field(init = False, default = PorcentagemValidator())
 
 
-    def __post_init__(self, id = "", nome = ""):
+    def __post_init__(self):
         self.machine = Machine(model = self, states = ["Open", "Closed"], transitions = transitions, initial = "Closed")
-        self.id = id
-        self.nome = nome
         self.tipo = TiposDispostivos.PERSIANA
         self.porcentagem_aberta = 10
 
@@ -58,7 +59,7 @@ class Persiana:
 
 if __name__ == "__main__":
 
-    persiana = Persiana()
+    persiana = Persiana("persiana_quarto", "persiana do quarto")
     persiana.abrir()
     print(persiana.state)
     persiana.definir_porcentagem_abertura()
