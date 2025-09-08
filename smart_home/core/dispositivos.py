@@ -1,4 +1,12 @@
 from enum import Enum
+from abc import ABC
+
+
+class Dispositivo(ABC):
+
+    def __init__(self, id:str, nome:str):
+        self.id = id
+        self.nome = nome
 
 
 class StatesPorta(Enum):
@@ -54,3 +62,14 @@ class TiposDispostivos(Enum):
     PERSIANA = 3,
     PORTA = 4,
     TOMADA = 5
+
+
+    def __str__(self) -> str:
+        return self.name
+
+
+    def all_dispositives():
+        
+        dispositivos = [dispositivo.name for dispositivo in list(TiposDispostivos)]
+
+        return ", ".join(dispositivos)
