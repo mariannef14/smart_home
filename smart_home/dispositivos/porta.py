@@ -2,16 +2,7 @@ from enum import Enum
 from transitions import Machine
 from transitions.core import MachineError
 
-
-class StatesPorta(Enum):
-
-    TRANCADA = 0
-    DESTRANCADA = 1
-    ABERTA = 2
-
-
-    def __str__(self) -> str:
-        return self.name
+from smart_home.core.dispositivos import StatesPorta, TiposDispostivos
 
 
 transitions = [
@@ -44,8 +35,11 @@ transitions = [
 
 class Porta:
 
-    def __init__(self):
+    def __init__(self, id = "", nome = ""):
         self.machine = Machine(model = self, states = StatesPorta, transitions = transitions, initial = StatesPorta.TRANCADA, on_exception = "machine_error", send_event = True)
+        self.id = id
+        self.nome = nome
+        self.tipo = TiposDispostivos.PORTA
         self.tentativas_invalidas = 0
     
 

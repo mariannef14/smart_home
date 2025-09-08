@@ -1,5 +1,7 @@
 from transitions import Machine
 
+from smart_home.core.dispositivos import TiposDispostivos
+
 
 class PotenciaValidator:
 
@@ -38,8 +40,11 @@ transitions = [
 
 class Tomada:
 
-    def __init__(self, potencia):
+    def __init__(self, id, nome, potencia):
         self.machine = Machine(model = self, states = ["On", "Off"], transitions = transitions, initial = "Off")
+        self.id = id
+        self.nome = nome
+        self.tipo = TiposDispostivos.TOMADA
         self.potencia_w = PotenciaValidator()
         self.consumo_wh = 0
     
