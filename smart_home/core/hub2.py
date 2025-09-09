@@ -80,17 +80,9 @@ class Hub:
 
     def remover_dispositivo(self):
 
-        #TODO: RETORNA O DISPOSITIVO, VER COMO APAGA
         dispositivo = self.mostrar_dispositivo()
-        print(dispositivo) 
-
-        # for dispositivo in self.dispositivos:
-            
-            # if dispositivo.id == id_dispositivo:
-        print(self.dispositivos[dispositivo]) #ver se printa o dispositivo correto
-                # self.dispositivos.remove(dispositivo)
-                # del[dispositivo]
-                # dispositivo.remove(id_dispositivo)
+        index = self.dispositivos.index(dispositivo)
+        self.dispositivos.pop(index)
 
 
     def executar_comando(self):
@@ -133,7 +125,7 @@ class Hub:
 if __name__ == "__main__":
     hub = Hub()
     hub.adicionar_dispositivo()
-    # hub.adicionar_dispositivo()
+    hub.adicionar_dispositivo()
     # hub.listar_dispositivos()
     # hub.mostrar_dispositivo()
     hub.remover_dispositivo()
