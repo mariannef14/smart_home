@@ -64,8 +64,8 @@ class Hub:
         for dispositivo in self.dispositivos:
             
             if dispositivo.id == id_dispositivo.lower().strip():
-                print(dispositivo)
                 encontrou = True
+                return dispositivo
 
         if encontrou == False: 
             #TODO: LANÇAR EXCEÇÃO PERSONALIZADA PARA DISPOSITIVO NÃO ENCONTRADO
@@ -80,16 +80,17 @@ class Hub:
 
     def remover_dispositivo(self):
 
-        id_dispositivo = self.mostrar_dispositivo()
-        print(id_dispositivo)
+        #TODO: RETORNA O DISPOSITIVO, VER COMO APAGA
+        dispositivo = self.mostrar_dispositivo()
+        print(dispositivo) 
 
-        for dispositivo in self.dispositivos:
+        # for dispositivo in self.dispositivos:
             
-            if dispositivo.id == id_dispositivo.lower().strip():
-                print(self.dispositivos[dispositivo]) #ver se printa o dispositivo correto
+            # if dispositivo.id == id_dispositivo:
+        print(self.dispositivos[dispositivo]) #ver se printa o dispositivo correto
                 # self.dispositivos.remove(dispositivo)
                 # del[dispositivo]
-                dispositivo.remove(id_dispositivo)
+                # dispositivo.remove(id_dispositivo)
 
 
     def executar_comando(self):
