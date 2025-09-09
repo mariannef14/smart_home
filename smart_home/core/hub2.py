@@ -5,6 +5,11 @@ from typing import List
 from smart_home.core.dispositivos import TiposDispostivos
 from smart_home.dispositivos.porta import Porta
 from smart_home.dispositivos.luz import Luz
+from smart_home.dispositivos.tomada import Tomada
+from smart_home.dispositivos.irrigador import Irrigador
+from smart_home.dispositivos.persiana import Persiana
+from smart_home.dispositivos.camera import Camera
+from smart_home.core.dispositivos import TiposDispostivos
 
 
 @dataclass
@@ -15,17 +20,16 @@ class Hub:
     
     def adicionar_dispositivo(self):
         print("Tipos suportados:", TiposDispostivos.all_dispositives())
-        tipo_dispositivo = input("Tipo do dispositivo: ").title().strip()
-        id_dispositivo = input("Id (sem espacos): ")
+        tipo_dispositivo = input("Tipo do dispositivo: ").upper().strip()
+        id_dispositivo = input("Id (sem espacos): ").lower().strip()
         nome_dispositivo = input("Nome: ")
 
 
-        if tipo_dispositivo == "Porta":
+        if tipo_dispositivo == TiposDispostivos.PORTA.name:
             self.dispositivos.append(Porta(id_dispositivo, nome_dispositivo))
         
-        #TODO: TESTAR SE A LUZ ESTÁ FUNCIONANDO SOZINHA COM O PYTHON -M E DEPOIS COM O HUB
-        #TODO: PROCURAR SE TEM COMO DEFINIR VALOR PADRÃO COM O DATACLASS
-        elif tipo_dispositivo == "Luz":
+
+        elif tipo_dispositivo == TiposDispostivos.LUZ.name:
 
             brilho_luz = input("Digite o valor do brilho: ")
             cor_luz = input("Digite a cor: ").upper().strip()
@@ -34,43 +38,54 @@ class Hub:
 
             self.dispositivos.append(Luz(id_dispositivo, nome_dispositivo, int(brilho_luz), cor_luz))
         
-        elif tipo_dispositivo == "":
-            self.dispositivos.append(Tomada(id_dispositivo, nome_dispositivo))
+
+        elif tipo_dispositivo == TiposDispostivos.TOMADA.name:
+            potencia_w = int(input("Potência da tomada: "))
+            self.dispositivos.append(Tomada(id_dispositivo, nome_dispositivo, potencia_w))
+        
+
+        elif tipo_dispositivo == TiposDispostivos.IRRIGADOR.name:
+            self.dispositivos.append(Irrigador(id_dispositivo, nome_dispositivo))
+        
+
+        elif tipo_dispositivo == TiposDispostivos.PERSIANA.name:
+            porcentagem = int(input("Deseja abrir quantos porcentos da persiana?"))
+            self.dispositivos.append(Persiana(id_dispositivo, nome_dispositivo, porcentagem))
+        
+        elif tipo_dispositivo == TiposDispostivos.CAMERA.name:
+            self.dispositivos.append(Camera(id_dispositivo, nome_dispositivo))
     
 
-    def mostrar_dispositivo(self, id_dispositivo):
+    def mostrar_dispositivo(self):
 
-        # id_dispositivo = input("Digite o id do dispositivo que deseja ver mais detalhes:")
-
+        id_dispositivo = input("Digite o id do dispositivo:")
+        encontrou = False
         
         for dispositivo in self.dispositivos:
             
             if dispositivo.id == id_dispositivo.lower().strip():
-                # print("ID | NOME | TIPO | ESTADO")
-                # return f"{dispositivo.get('id')} | {dispositivo.get('nome')} | {dispositivo.get('tipo')} | {dispositivo.get('estado')}"
-                return f"ID: {dispositivo.id} | Nome: {dispositivo.nome} | Tipo: {dispositivo.tipo} | Estado: {dispositivo.state}"
-                
-        #TODO: LANÇAR EXCEÇÃO PERSONALIZADA PARA DISPOSITIVO NÃO ENCONTRADO
-        print("Não encontrou")
+                print(dispositivo)
+                encontrou = True
+
+        if encontrou == False: 
+            #TODO: LANÇAR EXCEÇÃO PERSONALIZADA PARA DISPOSITIVO NÃO ENCONTRADO
+            print("Não encontrou")
 
 
-    #TODO: PRINT COM CADA DISPOSITIVO IMPRIMINDO COM O REP DE CADA DISPOSITIVO
     def listar_dispositivos(self):
         
-        # print("ID | TIPO | ESTADO")
         for dispositivo in self.dispositivos:
-            print(f"{dispositivo.id} | {dispositivo.tipo} | {dispositivo.state}")
-            # print(f"ID: {dispositivo.get('id')} | Tipo: {dispositivo.get('tipo')} | Estado: {dispositivo.get('estado')}")
-            # print(f"{dispositivo.get('id')} | {dispositivo.get('tipo')} | {dispositivo.get('estado')}")
+            print(dispositivo)
 
 
     def remover_dispositivo(self):
 
-        id_dispositivo = input("Id do dispositivo: ")
+        id_dispositivo = self.mostrar_dispositivo()
+        print(id_dispositivo)
 
         for dispositivo in self.dispositivos:
             
-            if dispositivo.get("id") == id_dispositivo.lower().strip():
+            if dispositivo.id == id_dispositivo.lower().strip():
                 print(self.dispositivos[dispositivo]) #ver se printa o dispositivo correto
                 # self.dispositivos.remove(dispositivo)
                 # del[dispositivo]
@@ -115,10 +130,11 @@ class Hub:
 
 
 if __name__ == "__main__":
-    # porta = Porta("porta_sala", "porta da sala")
     hub = Hub()
-    # dispositivos = [{"id": porta.id, "nome": porta.nome, "tipo": porta.tipo, "estado": porta.state.name}]
     hub.adicionar_dispositivo()
-    hub.listar_dispositivos()
-    # hub.executar_comando()
+    # hub.adicionar_dispositivo()
+    # hub.listar_dispositivos()
+    # hub.mostrar_dispositivo()
     hub.remover_dispositivo()
+    # hub.executar_comando()
+    # hub.remover_dispositivo()
