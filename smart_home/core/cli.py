@@ -1,4 +1,4 @@
-from smart_home.core.hub import Hub
+from smart_home.core.hub2 import Hub
 
 hub = Hub()
 
@@ -24,8 +24,7 @@ while True:
             hub.listar_dispositivos()
         
         elif opcao == 2:
-            id_dispositivo = input("Digite o id do dispositivo que deseja ver mais detalhes:")
-            print(hub.mostrar_dispositivo())
+            hub.mostrar_dispositivo()
         
         #TODO: FALTA FINALIZAR
         elif opcao == 3:
