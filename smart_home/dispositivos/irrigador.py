@@ -31,10 +31,11 @@ class Irrigador(Dispositivo):
 
     def __init__(self, id:str, nome :str):
         self.machine = Machine(model = self, states = StatusIrrigador, transitions = transitions, initial = StatusIrrigador.DESLIGADO) 
-        super().__init__(id, nome)
-        # self.id = id
-        # self.nome = nome
-        self.tipo = TiposDispostivos.IRRIGADOR
+        super().__init__(id, nome, TiposDispostivos.IRRIGADOR)
+
+
+    def __str__(self):
+        return super().__str__() + f" | {self.state}"
         
 
     def on_enter_IRRIGANDO(self):

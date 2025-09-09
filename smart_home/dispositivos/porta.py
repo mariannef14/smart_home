@@ -36,11 +36,8 @@ transitions = [
 class Porta(Dispositivo):
 
     def __init__(self, id:str, nome:str):
-        super().__init__(id, nome)
+        super().__init__(id, nome, TiposDispostivos.PORTA)
         self.machine = Machine(model = self, states = StatesPorta, transitions = transitions, initial = StatesPorta.TRANCADA, on_exception = "machine_error", send_event = True)
-        # self.id = id
-        # self.nome = nome
-        self.tipo = TiposDispostivos.PORTA
         self.tentativas_invalidas = 0
     
 
@@ -52,9 +49,14 @@ class Porta(Dispositivo):
 
         print(event.error)
 
-        #TODO: lançar o raise quando estiver com o menu com o tratamento do try
+        #TODO: lançar erro personalizado
         raise MachineError(event)
-        
+    
+
+    def __str__(self):
+        return super().__str__() + f" | {self.state}"
+
+
 
 if __name__ == '__main__':
 

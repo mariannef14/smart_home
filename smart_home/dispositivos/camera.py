@@ -38,11 +38,12 @@ class Camera(Dispositivo):
 
     def __init__(self, id:str, nome:str):
         self.machine = Machine(model = self, states = StatusCamera, transitions = transitions, initial = StatusCamera.OFF)
-        super().__init__(id, nome)
-        # self.id = id
-        # self.nome = nome
-        self.tipo_dispositivo = TiposDispostivos.CAMERA
-    
+        super().__init__(id, nome, TiposDispostivos.CAMERA)
+
+
+    def __str__(self):
+        return super().__str__() + f" | {self.state}"
+
 
 
 if __name__ == '__main__':

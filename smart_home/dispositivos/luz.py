@@ -42,38 +42,31 @@ class Luz(Dispositivo):
 
     id:str
     nome:str
-    # brilho:int = field(init = False, default = BrilhoValidator())
     brilho:int = field(default = BrilhoValidator())
-    # cor:CorEnum = field(init= False, default = CorValidator())
     cor:CorEnum = field(default = CorValidator())
+    tipo = TiposDispostivos.LUZ
 
-    #TODO: CRIAR __INIT__ PARA ADICIONAR VALOR PADRÃO??
 
     def __post_init__(self):
         self.machine = Machine(model = self, states = ["Off", "On"], transitions = transitions, initial = "Off")
-        # self.brilho = 35
-        # self.cor = "neutra"
-        self.tipo = TiposDispostivos.LUZ
-     
+        
 
     def mudar_brilho_luz(self, value:int):
-        
-        # value = int(input("Digite o valor do brilho: "))
-
         self.brilho = value
 
     
     def mudar_cor_luz(self, value:str):
-
-        # value = input("Digite a cor: ").upper().strip()
-
         self.cor = value
-       
+    
+
+    def __str__(self):
+        return super().__str__() + f" | {self.state}"
+
 
 
 if __name__ == '__main__':
 
-    luz = Luz("luz_sala", "luz da sala")
+    luz = Luz("luz_sala", "luz da sala", 50, "NEUTRA")
     print(luz.brilho)
     print(luz.cor)
     luz.ligar()
@@ -82,7 +75,7 @@ if __name__ == '__main__':
     luz.definir_brilho(value = 50)
     print(luz.brilho)
 
-    luz.definir_cor(value = "fria")
+    luz.definir_cor(value = "FRIA")
     print(luz.cor)
 
     luz.desligar()

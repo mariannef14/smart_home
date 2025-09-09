@@ -37,24 +37,25 @@ class Persiana(Dispositivo):
 
     id:str
     nome:str
-    porcentagem_aberta:int = field(init = False, default = PorcentagemValidator())
+    tipo = TiposDispostivos.PERSIANA
+    porcentagem_aberta:int = field(default = PorcentagemValidator())
 
 
     def __post_init__(self):
         self.machine = Machine(model = self, states = ["Open", "Closed"], transitions = transitions, initial = "Closed")
-        self.tipo = TiposDispostivos.PERSIANA
-        self.porcentagem_aberta = 10
-
+    
 
     def on_enter_Closed(self):
         self.porcentagem_aberta = 0
     
 
-    def porcentagem_abertura(self):
-        
-        porcentagem = int(input("Deseja abrir quantos porcentos da persiana?"))
+    def porcentagem_abertura(self, value):
+        self.porcentagem_aberta = value
 
-        self.porcentagem_aberta = porcentagem
+
+    def __str__(self):
+        return super().__str__() + f" | {self.state}"
+
 
 
 if __name__ == "__main__":
@@ -62,7 +63,7 @@ if __name__ == "__main__":
     persiana = Persiana("persiana_quarto", "persiana do quarto")
     persiana.abrir()
     print(persiana.state)
-    persiana.definir_porcentagem_abertura()
+    persiana.definir_porcentagem_abertura(value = 10)
     print(persiana.state)
     print(f"Persiana com {persiana.porcentagem_aberta}% aberta")
     persiana.fechar()

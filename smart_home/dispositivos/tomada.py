@@ -30,8 +30,8 @@ class Tomada(Dispositivo):
 
     id:str
     nome:str
-    tipo:TiposDispostivos = field(init = False, default = TiposDispostivos.TOMADA)
     potencia_w:int = PotenciaValidator()
+    tipo:TiposDispostivos = TiposDispostivos.TOMADA
 
 
     def __post_init__(self):
@@ -48,6 +48,7 @@ class Tomada(Dispositivo):
         hora_tomada_desligou = datetime.now()
         horas_ligada = ((hora_tomada_desligou - self.hora_tomada_ligou).total_seconds() / 3600)
         self.consumo_wh = abs(self.potencia_w * horas_ligada)
+
 
 
 if __name__ == '__main__':
