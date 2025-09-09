@@ -24,7 +24,7 @@ while True:
             hub.listar_dispositivos()
         
         elif opcao == 2:
-            hub.mostrar_dispositivo()
+            print(hub.mostrar_dispositivo())
         
         #TODO: FALTA FINALIZAR
         elif opcao == 3:
