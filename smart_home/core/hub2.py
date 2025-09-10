@@ -2,14 +2,13 @@ from transitions import Machine
 from dataclasses import dataclass, field
 from typing import List
 
-from smart_home.core.dispositivos import TiposDispostivos
+from smart_home.core.dispositivos import TiposDispostivos, CorEnum
 from smart_home.dispositivos.porta import Porta
 from smart_home.dispositivos.luz import Luz
 from smart_home.dispositivos.tomada import Tomada
 from smart_home.dispositivos.irrigador import Irrigador
 from smart_home.dispositivos.persiana import Persiana
 from smart_home.dispositivos.camera import Camera
-from smart_home.core.dispositivos import TiposDispostivos
 
 
 @dataclass
@@ -31,8 +30,8 @@ class Hub:
 
         elif tipo_dispositivo == TiposDispostivos.LUZ.name:
 
-            brilho_luz = input("Digite o valor do brilho: ")
-            cor_luz = input("Digite a cor: ").upper().strip()
+            brilho_luz = input("Digite o valor do brilho (0-100): ")
+            cor_luz = input(f"Digite a cor [{CorEnum.all_colors()}]: ").upper().strip()
             brilho_luz = 50 if brilho_luz == "" else brilho_luz
             cor_luz = "NEUTRA" if cor_luz == "" else cor_luz
 
@@ -49,7 +48,7 @@ class Hub:
         
 
         elif tipo_dispositivo == TiposDispostivos.PERSIANA.name:
-            porcentagem = int(input("Deseja abrir quantos porcentos da persiana?"))
+            porcentagem = int(input("Deseja abrir quantos porcentos da persiana? (0-100): "))
             self.dispositivos.append(Persiana(id_dispositivo, nome_dispositivo, porcentagem))
         
         elif tipo_dispositivo == TiposDispostivos.CAMERA.name:
@@ -86,12 +85,16 @@ class Hub:
 
 
     def executar_comando(self):
+        #TODO: CASO O DISPOSITVO TENHA ATRIBUTOS, MOSTRAR A PERGUNTA DE ARGUMENTOS
 
-        id_dispositivo = input("Id do dispositivo: ")
+        dispositivo = self.mostrar_dispositivo()
+        comandos_possiveis = ",".join(dispositivo.machine.get_triggers(dispositivo.state))
+        print(f"Comandos possíveis no estado atual do dispositivo -> {comandos_possiveis}")
+        comando = input("Qual comando deseja executar? ")
+        dispositivo.trigger(comando)
+        print(dispositivo.state)
 
-        # print(self.mostrar_dispositivo(id_dispositivo).strip().split("|")[3].get_triggers())
-        comando = input("Comando: ")
-        argumentos = input("Argumentos (k=v separados por espaco) ou ENTER: ")
+        # argumentos = input("Argumentos (k=v separados por espaco) ou ENTER: ")
 
 
     def rotinas(self, tipo_rotina:str):
@@ -125,9 +128,9 @@ class Hub:
 if __name__ == "__main__":
     hub = Hub()
     hub.adicionar_dispositivo()
-    hub.adicionar_dispositivo()
+    # hub.adicionar_dispositivo()
     # hub.listar_dispositivos()
     # hub.mostrar_dispositivo()
-    hub.remover_dispositivo()
-    # hub.executar_comando()
+    hub.executar_comando()
+    # hub.remover_dispositivo()
     # hub.remover_dispositivo()
