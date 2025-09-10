@@ -30,7 +30,7 @@ transitions = [
 class Irrigador(Dispositivo):
 
     def __init__(self, id:str, nome :str):
-        self.machine = Machine(model = self, states = StatusIrrigador, transitions = transitions, initial = StatusIrrigador.DESLIGADO) 
+        self.machine = Machine(model = self, states = StatusIrrigador, transitions = transitions, initial = StatusIrrigador.DESLIGADO, auto_transitions = False) 
         super().__init__(id, nome, TiposDispostivos.IRRIGADOR)
 
 

@@ -37,7 +37,7 @@ transitions = [
 class Camera(Dispositivo):
 
     def __init__(self, id:str, nome:str):
-        self.machine = Machine(model = self, states = StatusCamera, transitions = transitions, initial = StatusCamera.OFF)
+        self.machine = Machine(model = self, states = StatusCamera, transitions = transitions, initial = StatusCamera.OFF, auto_transitions = False)
         super().__init__(id, nome, TiposDispostivos.CAMERA)
 
 

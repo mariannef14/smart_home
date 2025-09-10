@@ -37,20 +37,25 @@ class Porta(Dispositivo):
 
     def __init__(self, id:str, nome:str):
         super().__init__(id, nome, TiposDispostivos.PORTA)
-        self.machine = Machine(model = self, states = StatesPorta, transitions = transitions, initial = StatesPorta.TRANCADA, on_exception = "machine_error", send_event = True)
-        self.tentativas_invalidas = 0
+        self.machine = Machine(model = self, states = StatesPorta, transitions = transitions, initial = StatesPorta.TRANCADA, auto_transitions = False, on_exception = "machine_error", send_event = True)
+        self.__tentativas_invalidas = 0
     
 
     def machine_error(self, event):
 
         if event.state.name == "ABERTA" and event.event.name == "trancar": 
 
-            self.tentativas_invalidas += 1
+            self.__tentativas_invalidas += 1
 
-        print(event.error)
+        # print(event.error)
 
         #TODO: lançar erro personalizado
         raise MachineError(event)
+    
+
+    @property
+    def quantidade_tentativas_invalidas(self):
+        return self.__tentativas_invalidas
     
 
     def __str__(self):
@@ -75,4 +80,4 @@ if __name__ == '__main__':
     print("Status porta", porta.state)
     porta.trancar()
     print("Status porta", porta.state)
-    print(porta.tentativas_invalidas)
+    print(porta.quantidade_tentativas_invalidas)

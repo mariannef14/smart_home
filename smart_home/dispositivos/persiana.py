@@ -42,7 +42,7 @@ class Persiana(Dispositivo):
 
 
     def __post_init__(self):
-        self.machine = Machine(model = self, states = ["Open", "Closed"], transitions = transitions, initial = "Closed")
+        self.machine = Machine(model = self, states = ["Open", "Closed"], transitions = transitions, initial = "Closed", auto_transitions = False)
     
 
     def on_enter_Closed(self):

@@ -48,7 +48,7 @@ class Luz(Dispositivo):
 
 
     def __post_init__(self):
-        self.machine = Machine(model = self, states = ["Off", "On"], transitions = transitions, initial = "Off")
+        self.machine = Machine(model = self, states = ["Off", "On"], transitions = transitions, initial = "Off", auto_transitions = False)
         
 
     def mudar_brilho_luz(self, value:int):
