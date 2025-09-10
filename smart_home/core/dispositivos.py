@@ -59,6 +59,13 @@ class CorEnum(Enum):
         return self.name
 
 
+    def all_colors():
+        
+        cores = [cor.name for cor in list(CorEnum)]
+
+        return ", ".join(cores)
+
+
 
 class StatusCamera(Enum):
 
