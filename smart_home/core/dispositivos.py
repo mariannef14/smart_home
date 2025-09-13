@@ -1,5 +1,6 @@
 from enum import Enum
 from abc import ABC
+from dataclasses import dataclass
 
 
 class TiposDispostivos(Enum):
@@ -24,12 +25,18 @@ class TiposDispostivos(Enum):
 
 
 
+@dataclass
 class Dispositivo(ABC):
 
-    def __init__(self, id:str, nome:str, tipo_dispositivo: TiposDispostivos):
-        self.id = id
-        self.nome = nome
-        self.tipo = tipo_dispositivo
+    _id:str
+    nome:str
+    tipo:TiposDispostivos
+    
+
+    @property
+    def id(self):
+        return self._id
+
 
     def __str__(self):
         return f"{self.id} | {self.tipo}"

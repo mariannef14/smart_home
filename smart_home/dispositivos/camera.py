@@ -1,4 +1,5 @@
 from transitions import Machine
+from dataclasses import dataclass, field
 
 from smart_home.core.dispositivos import StatusCamera, TiposDispostivos
 from smart_home.core.dispositivos import Dispositivo
@@ -34,12 +35,14 @@ transitions = [
 ]
 
 
+@dataclass
 class Camera(Dispositivo):
 
-    def __init__(self, id:str, nome:str):
-        self.machine = Machine(model = self, states = StatusCamera, transitions = transitions, initial = StatusCamera.OFF, auto_transitions = False)
-        super().__init__(id, nome, TiposDispostivos.CAMERA)
+    tipo:TiposDispostivos = field(init = False, default = TiposDispostivos.CAMERA)
 
+
+    def __post_init__(self):
+        self.machine = Machine(model = self, states = StatusCamera, transitions = transitions, initial = StatusCamera.OFF, auto_transitions = False)    
 
     def __str__(self):
         return super().__str__() + f" | {self.state}"
@@ -49,11 +52,13 @@ class Camera(Dispositivo):
 if __name__ == '__main__':
 
     camera = Camera("camera_quintal", "camera do quintal")
+    print("Id:", camera.id)
+    print("Tipo do dispositivo:", camera.tipo)
     camera.ligar()
-    print(camera.state)
+    print("Status:", camera.state)
     camera.gravar()
-    print(camera.state)
+    print("Status:", camera.state)
     camera.parar_gravar()
-    print(camera.state)
+    print("Status:", camera.state)
     camera.desligar()
-    print(camera.state)
+    print("Status:", camera.state)

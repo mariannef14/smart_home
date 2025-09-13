@@ -1,4 +1,5 @@
 from transitions import Machine
+from dataclasses import dataclass, field
 
 from smart_home.core.dispositivos import StatusIrrigador, TiposDispostivos
 from smart_home.core.dispositivos import Dispositivo
@@ -27,11 +28,14 @@ transitions = [
 ]
 
 
+@dataclass
 class Irrigador(Dispositivo):
 
-    def __init__(self, id:str, nome :str):
-        self.machine = Machine(model = self, states = StatusIrrigador, transitions = transitions, initial = StatusIrrigador.DESLIGADO, auto_transitions = False) 
-        super().__init__(id, nome, TiposDispostivos.IRRIGADOR)
+    tipo:TiposDispostivos = field(init = False, default = TiposDispostivos.IRRIGADOR)
+
+
+    def __post_init__(self):
+        self.machine = Machine(model = self, states = StatusIrrigador, transitions = transitions, initial = StatusIrrigador.DESLIGADO, auto_transitions = False)
 
 
     def __str__(self):
@@ -41,7 +45,7 @@ class Irrigador(Dispositivo):
     def on_enter_IRRIGANDO(self):
 
         for i in range(2):
-            print(f"Irrigando Plantas há {i+1} hora...")
+            print(f"Irrigando Plantas há {i+1}h...")
         
         self.desligar()
     
@@ -50,10 +54,9 @@ class Irrigador(Dispositivo):
 if __name__ == "__main__":
 
     irrigador = Irrigador("irrigador_jardim", "irrigador do jardim")
+    print("Id", irrigador.id)
+    print("Tipo do dispositivo:", irrigador.tipo)
     irrigador.ligar()
-    print(irrigador.state)
+    print("Status:", irrigador.state)
     irrigador.irrigar()
-    print(irrigador.state)
-    if irrigador.state.name == "IRRIGANDO":
-        irrigador.desligar()
-        print(irrigador.state)
+    print("Status:", irrigador.state)
