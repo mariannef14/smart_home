@@ -1,5 +1,5 @@
 from transitions import Machine
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import List
 
 from smart_home.core.dispositivos import TiposDispostivos, CorEnum
@@ -31,7 +31,7 @@ class Hub:
         elif tipo_dispositivo == TiposDispostivos.LUZ.name:
 
             brilho_luz = input("Digite o valor do brilho (0-100): ")
-            cor_luz = input(f"Digite a cor [{CorEnum.all_colors()}]: ").upper().strip()
+            cor_luz = input(f"Digite a cor [{CorEnum.all_colors()}]: ")
             brilho_luz = 50 if brilho_luz == "" else brilho_luz
             cor_luz = "NEUTRA" if cor_luz == "" else cor_luz
 
@@ -57,18 +57,15 @@ class Hub:
 
     def mostrar_dispositivo(self):
 
-        id_dispositivo = input("Digite o id do dispositivo:")
-        encontrou = False
+        id_dispositivo = input("Digite o id do dispositivo: ")
         
         for dispositivo in self.dispositivos:
             
             if dispositivo.id == id_dispositivo.lower().strip():
-                encontrou = True
                 return dispositivo
 
-        if encontrou == False: 
-            #TODO: LANÇAR EXCEÇÃO PERSONALIZADA PARA DISPOSITIVO NÃO ENCONTRADO
-            print("Não encontrou")
+        #TODO: LANÇAR EXCEÇÃO PERSONALIZADA PARA DISPOSITIVO NÃO ENCONTRADO
+        raise ValueError("Não encontrou")
 
 
     def listar_dispositivos(self):
@@ -85,16 +82,47 @@ class Hub:
 
 
     def executar_comando(self):
-        #TODO: CASO O DISPOSITVO TENHA ATRIBUTOS, MOSTRAR A PERGUNTA DE ARGUMENTOS
 
         dispositivo = self.mostrar_dispositivo()
         comandos_possiveis = ",".join(dispositivo.machine.get_triggers(dispositivo.state))
         print(f"Comandos possíveis no estado atual do dispositivo -> {comandos_possiveis}")
         comando = input("Qual comando deseja executar? ")
+        #TODO: COLOCAR BLOCO DE MUDAR DE ESTADO DENTRO DE UM TRY CATCH E LANÇAR EXCEÇÃO PERSONALIZADA(TransicaoInvalida)
         dispositivo.trigger(comando)
+        #TODO: TIRAR ESSE PRINT
         print(dispositivo.state)
 
-        # argumentos = input("Argumentos (k=v separados por espaco) ou ENTER: ")
+        if dispositivo.tipo == TiposDispostivos.LUZ or dispositivo.tipo == TiposDispostivos.PERSIANA: 
+
+            print("Atributos que podem ser modificados [LUZ]: brilho e cor, [PERSIANA]: porcentagem de abertura(abertura)")
+            argumentos = input("Argumentos (k=v separados por espaco) ou ENTER: ")
+            
+            if argumentos != "":
+                argumentos_dict = dict(argumento.split("=") for argumento in argumentos.split())
+
+                #TODO: TIRAR ESSE PRINT
+                print(argumentos_dict)
+                self.mudar_atributos(argumentos_dict, dispositivo)
+            #TODO: TIRAR ESSE PRINT
+            print(dispositivo)
+                
+
+    def mudar_atributos(self, argumentos, dispositivo):
+
+        if "brilho" in argumentos:
+            dispositivo.definir_brilho(value = int(argumentos.get("brilho")))
+            #TODO: TIRAR ESSE PRINT
+            print(dispositivo.brilho)
+        
+        if "cor" in argumentos:
+            dispositivo.definir_cor(value = argumentos.get("cor"))
+            #TODO: TIRAR ESSE PRINT
+            print(dispositivo.cor)
+        
+        if "abertura" in argumentos:
+            dispositivo.definir_porcentagem_abertura(value = int(argumentos.get("abertura")))
+            #TODO: TIRAR ESSE PRINT
+            print(dispositivo.percentual_abertura)
 
 
     def rotinas(self, tipo_rotina:str):
