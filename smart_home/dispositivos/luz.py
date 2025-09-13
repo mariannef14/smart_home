@@ -40,23 +40,31 @@ transitions = [
 @dataclass
 class Luz(Dispositivo):
 
-    id:str
-    nome:str
-    brilho:int = field(default = BrilhoValidator())
-    cor:CorEnum = field(default = CorValidator())
-    tipo = TiposDispostivos.LUZ
+    _brilho:int =  BrilhoValidator()
+    _cor:CorEnum = CorValidator()
+    tipo:TiposDispostivos = field(init = False, default = TiposDispostivos.LUZ)
 
 
     def __post_init__(self):
         self.machine = Machine(model = self, states = ["Off", "On"], transitions = transitions, initial = "Off", auto_transitions = False)
-        
+    
+
+    @property
+    def brilho(self):
+        return self._brilho
+    
+
+    @property
+    def cor(self):
+        return self._cor
+
 
     def mudar_brilho_luz(self, value:int):
-        self.brilho = value
+        self._brilho = value
 
-    
+
     def mudar_cor_luz(self, value:str):
-        self.cor = value
+        self._cor = value
     
 
     def __str__(self):
@@ -66,17 +74,19 @@ class Luz(Dispositivo):
 
 if __name__ == '__main__':
 
-    luz = Luz("luz_sala", "luz da sala", 50, "NEUTRA")
-    print(luz.brilho)
-    print(luz.cor)
+    luz = Luz("luz_sala", "luz da sala", 70, "FRIA")
+    print("Id:", luz.id)
+    print("Tipo do dispositivo:", luz.tipo)
+    print("Brilho:", luz.brilho)
+    print("Cor:", luz.cor)
     luz.ligar()
     print("Status luz: ", luz.state)
 
     luz.definir_brilho(value = 50)
-    print(luz.brilho)
+    print("Brilho depois da definição:", luz.brilho)
 
     luz.definir_cor(value = "FRIA")
-    print(luz.cor)
+    print("Cor depois da definição:", luz.cor)
 
     luz.desligar()
     print("Status luz: ", luz.state)
