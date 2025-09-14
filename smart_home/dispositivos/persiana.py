@@ -36,7 +36,7 @@ transitions = [
 class Persiana(Dispositivo):
 
     tipo:TiposDispostivos = field(init = False, default = TiposDispostivos.PERSIANA)
-    _percentual_abertura:int = field(init = False, default = PorcentagemValidator())
+    _percentual_abertura:int = field(default = PorcentagemValidator())
 
 
     def __post_init__(self):

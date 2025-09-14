@@ -90,3 +90,7 @@ if __name__ == '__main__':
 
     luz.desligar()
     print("Status luz: ", luz.state)
+
+
+    if luz.state == "On":
+        luz.desligar()

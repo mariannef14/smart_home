@@ -33,7 +33,7 @@ class Tomada(Dispositivo):
 
 
     def __post_init__(self):
-        self.machine = Machine(model = self, states = ["On", "Off"], transitions = transitions, initial = "Off")
+        self.machine = Machine(model = self, states = ["On", "Off"], transitions = transitions, initial = "Off", auto_transitions = False)
         self.hora_tomada_ligou = None
         self._consumo_wh = 0
     
@@ -72,3 +72,7 @@ if __name__ == '__main__':
     tomada.desligar()
     print("Consumo total:", tomada.consumo_wh)
     print("Status:", tomada.state)
+
+
+    if tomada.state != "On":
+        tomada.desligar()

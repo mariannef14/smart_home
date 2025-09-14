@@ -1,5 +1,6 @@
 from transitions import Machine
 from transitions.core import MachineError
+from dataclasses import dataclass, field
 
 from smart_home.core.dispositivos import StatesPorta, TiposDispostivos
 from smart_home.core.dispositivos import Dispositivo
@@ -25,6 +26,7 @@ transitions = [
         "dest": StatesPorta.ABERTA
     },
 
+
     {
         "trigger": "fechar",
         "source": StatesPorta.ABERTA,
@@ -33,10 +35,14 @@ transitions = [
 
 ]
 
+
+@dataclass
 class Porta(Dispositivo):
 
-    def __init__(self, id:str, nome:str):
-        super().__init__(id, nome, TiposDispostivos.PORTA)
+    tipo:TiposDispostivos = field(init = False, default = TiposDispostivos.PORTA)   
+
+
+    def __post_init__(self):
         self.machine = Machine(model = self, states = StatesPorta, transitions = transitions, initial = StatesPorta.TRANCADA, auto_transitions = False, on_exception = "machine_error", send_event = True)
         self.__tentativas_invalidas = 0
     
@@ -47,9 +53,7 @@ class Porta(Dispositivo):
 
             self.__tentativas_invalidas += 1
 
-        # print(event.error)
-
-        #TODO: lançar erro personalizado
+        #TODO: CRIAR EXCEÇÃO PERSONALIZADA(TransicaoInvalida)
         raise MachineError(event)
     
 
@@ -66,18 +70,31 @@ class Porta(Dispositivo):
 if __name__ == '__main__':
 
     porta = Porta("porta_sala", "porta da sala")
+    print("Id:", porta.id)
+    print("Tipo do dispositivo:", porta.tipo)
     porta.destrancar()
-    print("Status porta", porta.state)
+    print("Status: ", porta.state)
     porta.abrir()
-    print("Status porta", porta.state)
-    porta.fechar()
-    print("Status porta", porta.state)
-    porta.trancar()
-    print("Status porta", porta.state)
-    porta.destrancar()
-    print("Status porta", porta.state)
-    porta.abrir()
-    print("Status porta", porta.state)
-    porta.trancar()
-    print("Status porta", porta.state)
-    print(porta.quantidade_tentativas_invalidas)
+    print("Status: ", porta.state)
+    # porta.fechar()
+    # print("Status: ", porta.state)
+    # porta.trancar()
+    # print("Status: ", porta.state)
+    # porta.destrancar()
+    # print("Status: ", porta.state)
+    # porta.abrir()
+    # print("Status: ", porta.state)
+    # porta.trancar()
+    # print("Status: ", porta.state)
+    # print(porta.quantidade_tentativas_invalidas)
+
+    state_porta = porta.state
+
+    while state_porta != StatesPorta.TRANCADA:
+        if state_porta == StatesPorta.TRANCADA:
+            print("Porta trancada")
+        trigger = porta.machine.get_triggers(porta.state)
+        print(trigger)
+        porta.trigger(trigger[0])
+        state_porta = porta.state
+        print("Status: ", porta.state)
