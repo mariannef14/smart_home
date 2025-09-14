@@ -1,16 +1,16 @@
-from enum import Enum
+from enum import Enum, StrEnum
 from abc import ABC
 from dataclasses import dataclass
 
 
-class TiposDispostivos(Enum):
+class TiposDispostivos(StrEnum):
 
-    CAMERA = 0,
-    IRRIGADOR = 1,
-    LUZ = 2,
-    PERSIANA = 3,
-    PORTA = 4,
-    TOMADA = 5
+    CAMERA = "camera",
+    IRRIGADOR = "irrigador",
+    LUZ = "luz",
+    PERSIANA = "persiana",
+    PORTA = "porta",
+    TOMADA = "tomada"
 
 
     def __str__(self) -> str:
@@ -19,7 +19,7 @@ class TiposDispostivos(Enum):
 
     def all_dispositives():
         
-        dispositivos = [dispositivo.name for dispositivo in list(TiposDispostivos)]
+        dispositivos = [dispositivo.value.upper() for dispositivo in list(TiposDispostivos)]
 
         return ", ".join(dispositivos)
 
