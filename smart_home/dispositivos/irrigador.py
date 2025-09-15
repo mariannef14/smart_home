@@ -60,3 +60,11 @@ if __name__ == "__main__":
     print("Status:", irrigador.state)
     irrigador.irrigar()
     print("Status:", irrigador.state)
+
+    evento = irrigador.machine.events["ligar"]
+    print(evento)
+
+    for source, transicoes in evento.transitions.items():
+        for t in transicoes:
+            print(f"trigger={evento.name}, source={t.source}, dest={t.dest}")
+    
