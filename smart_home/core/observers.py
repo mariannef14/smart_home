@@ -113,19 +113,12 @@ class CliObserver(Observador):
             dispositivos_json = json.load(file)
 
         with open(file = "data/configuracao.json", mode = "w", encoding = "utf-8") as file:
-             
-             #TODO: VERIFICAR SE O DISPOSITIVO NÃO ESTÁ NO ARQUIVO PARA PODER SALVAR APENAS OS NOVOS
-             
+                          
              lista_dispositivos = dispositivos_json.get("dispositivos")
 
              ids = [dispositivo.get("id") for dispositivo in lista_dispositivos]
             
-             print(ids)
-
              for dispositivo in dispositivos:
-                # print(dispositivo.id)
-
-                print(dispositivo.id not in ids)
 
                 if dispositivo.id not in ids:
                     print(dispositivo.id, "não está")
@@ -168,9 +161,9 @@ class CliObserver(Observador):
                             "atributos": {}
                         }
 
-                    dispositivos_json["dispositivos"].append(dispositivo_dict)
+                    lista_dispositivos.append(dispositivo_dict)
                 
-                    json.dump(dispositivos_json, file, indent = 2)
+                json.dump(lista_dispositivos, file, indent = 2)
 
 
     def _remover_dispositivo_json(self, dispositivo):
