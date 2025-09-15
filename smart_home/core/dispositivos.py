@@ -43,11 +43,11 @@ class Dispositivo(ABC):
 
 
 
-class StatesPorta(Enum):
+class StatesPorta(StrEnum):
 
-    TRANCADA = 0
-    DESTRANCADA = 1
-    ABERTA = 2
+    TRANCADA = "trancada"
+    DESTRANCADA = "destrancada"
+    ABERTA = "aberta"
 
 
     def __str__(self) -> str:
@@ -55,11 +55,11 @@ class StatesPorta(Enum):
 
 
 
-class CorEnum(Enum):
+class CorEnum(StrEnum):
 
-    NEUTRA = 0,
-    FRIA = 1,
-    QUENTE = 2
+    NEUTRA = "neutra",
+    FRIA = "fria",
+    QUENTE = "quente"
 
     
     def __str__(self) -> str:
@@ -74,12 +74,12 @@ class CorEnum(Enum):
 
 
 
-class StatusCamera(Enum):
+class StatusCamera(StrEnum):
 
-    ON = 0 
-    GRAVANDO = 1
-    STOP = 2
-    OFF = 3
+    ON = "on"
+    GRAVANDO = "gravando"
+    STOP = "stop"
+    OFF = "off"
 
 
     def __str__(self) -> str:
@@ -87,11 +87,11 @@ class StatusCamera(Enum):
 
 
 
-class StatusIrrigador(Enum):
+class StatusIrrigador(StrEnum):
 
-    LIGADO = 0,
-    IRRIGANDO = 1,
-    DESLIGADO = 2
+    LIGADO = "ligado",
+    IRRIGANDO = "irrigando",
+    DESLIGADO = "desligado"
 
 
     def __str__(self) -> str:
