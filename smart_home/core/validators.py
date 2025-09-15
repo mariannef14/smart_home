@@ -13,6 +13,7 @@ class BrilhoValidator:
            setattr(instance, self.private_name, value)
         
         else:
+            #TODO: CRIAR EXCEÇÃO PERSONALIZADA(ValidacaoAtributo)
             raise ValueError("Valor do brilho precisa estar entre 0 e 100")
     
 
@@ -28,10 +29,11 @@ class CorValidator:
 
     def __set__(self, instance, value):
 
-        if value in [cor.name for cor in CorEnum]:
+        if value.upper().strip() in [cor.name for cor in CorEnum]:
             setattr(instance, self.private_name, value)
 
         else:
+            #TODO: CRIAR EXCEÇÃO PERSONALIZADA(ValidacaoAtributo)
             raise ValueError(f"A cor {value} não existe")
 
 
@@ -52,6 +54,7 @@ class PorcentagemValidator:
             setattr(instance, self.private_name, value)
         
         else:
+            #TODO: CRIAR EXCEÇÃO PERSONALIZADA(ValidacaoAtributo)
             raise ValueError("Valor da porcentagem de abertura precisa estar entre 0 e 100")
 
 
@@ -71,6 +74,7 @@ class PotenciaValidator:
             setattr(instance, self.private_name, value)
         
         else:
+            #TODO: CRIAR EXCEÇÃO PERSONALIZADA(ValidacaoAtributo)
             raise ValueError("Valor da potência deve ser maior que 0 ")
 
 
