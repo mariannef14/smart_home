@@ -1,4 +1,4 @@
-from smart_home.core.hub2 import Hub
+from smart_home.core.hub import Hub
 
 hub = Hub()
 
@@ -26,18 +26,29 @@ while True:
         elif opcao == 2:
             print(hub.mostrar_dispositivo())
         
-        #TODO: FALTA FINALIZAR
         elif opcao == 3:
             hub.executar_comando()
+        
+        elif opcao == 4:
+            hub.alterar_atributo()
+        
+        elif opcao == 5:
+            hub.executar_rotina()
+        
+        elif opcao == 6:
+            hub.gerar_relatorio()
+        
+        elif opcao == 7:
+            hub.salvar_configuracao()
 
         elif opcao == 8:
             hub.adicionar_dispositivo()
 
-        #TODO: FALTA INICIAR
         elif opcao == 9:
             hub.remover_dispositivo()
 
         elif opcao == 10:
+            hub.salvar_configuracao_lista_dispositivos()
             break
     
     except Exception as error:
