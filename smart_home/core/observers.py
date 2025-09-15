@@ -54,11 +54,14 @@ class CliObserver(Observador):
         
         elif tipo_evento == Eventos.EXECUTAR_COMANDO_DISPOSITIVO.value:
             self._adicionar_transicao_csv(dispositivo, trigger)
+            #TODO: MODIFICAR NO JSON
         
 
     def _adicionar_dispositivo_json(self, dispositivo):
 
-
+        #TODO: pegar objeto e converter para dicionario
+        #TODO: pegar esse objeto dicionario e adicionar em uma lista 
+        #TODO: pegar essa lista e adicionar no json
         with open(file = "data/configuracao.json", mode = "r", encoding = "utf-8") as file:
             dispositivos = json.load(file)
 
@@ -92,6 +95,15 @@ class CliObserver(Observador):
                     "nome": dispositivo.nome,
                     "estado": estado,
                     "atributos": {"percentual_abertura": dispositivo.percentual_abertura}
+                }
+            
+             elif dispositivo.tipo == TiposDispostivos.TOMADA:
+                dispositivo_dict = {
+                    "id": dispositivo.id,
+                    "tipo": dispositivo.tipo,
+                    "nome": dispositivo.nome,
+                    "estado": estado,
+                    "atributos": {"potencia": dispositivo.potencia_w}
                 }
             
              else:
