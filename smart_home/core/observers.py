@@ -41,10 +41,14 @@ class Observador(ABC):
 
 class CliObserver(Observador):
     
+    #TODO: TRANSFORMAR DISPOSITIVO PARA RECEBER VÁRIOS E NO INÍCIO DO HUB CHAMAR O ADICIONAR PARA
+    #ADICIONAR A LISTA OU CRIAR UM NOVO EVENTO SÓ PARA ADICIONAR OS DO JSON E ADICIONAR NA LISTA
     def atualizar(self, tipo_evento, dispositivo, trigger):
 
         if tipo_evento == Eventos.ADICIONAR_DISPOSITIVO.value:
-            self._adicionar_dispositivo_json(dispositivo)
+            # self._adicionar_dispositivo_json(dispositivo)
+            dispositivo_dict = self._parse_object_to_dict(dispositivo)
+            self._adicionar_dispositivo_dict(dispositivo_dict)
         
         if tipo_evento == Eventos.ADICIONAR_DISPOSITIVOS.value:
             self._adicionar_dispositivos_json(dispositivo)
@@ -55,7 +59,62 @@ class CliObserver(Observador):
         elif tipo_evento == Eventos.EXECUTAR_COMANDO_DISPOSITIVO.value:
             self._adicionar_transicao_csv(dispositivo, trigger)
             #TODO: MODIFICAR NO JSON
+
+
+    def _adicionar_dispositivo_dict(self, dispositivo):
+        ...
+
+    def _parse_object_to_dict(self, dispositivo):
         
+         if dispositivo.tipo == TiposDispostivos.LUZ or dispositivo.tipo == TiposDispostivos.PERSIANA or dispositivo.tipo == TiposDispostivos.TOMADA:
+                estado = dispositivo.state
+                print("entrei")
+         else:
+            estado = dispositivo.state.name
+
+
+            if dispositivo.tipo == TiposDispostivos.LUZ:
+            
+                dispositivo_dict = {
+                    "id": dispositivo.id,
+                    "tipo": dispositivo.tipo,
+                    "nome": dispositivo.nome,
+                    "estado": estado,
+                    "atributos": {
+                        "brilho": dispositivo.brilho,
+                        "cor": dispositivo.cor
+                    }
+                }
+        
+            elif dispositivo.tipo == TiposDispostivos.PERSIANA:
+                dispositivo_dict = {
+                    "id": dispositivo.id,
+                    "tipo": dispositivo.tipo,
+                    "nome": dispositivo.nome,
+                    "estado": estado,
+                    "atributos": {"percentual_abertura": dispositivo.percentual_abertura}
+                }
+            
+            elif dispositivo.tipo == TiposDispostivos.TOMADA:
+                dispositivo_dict = {
+                    "id": dispositivo.id,
+                    "tipo": dispositivo.tipo,
+                    "nome": dispositivo.nome,
+                    "estado": estado,
+                    "atributos": {"potencia": dispositivo.potencia_w}
+                }
+        
+            else:
+                dispositivo_dict = {
+                    "id": dispositivo.id,
+                    "tipo": dispositivo.tipo,
+                    "nome": dispositivo.nome,
+                    "estado": estado,
+                    "atributos": {}
+                }
+
+            return dispositivo_dict
+
 
     def _adicionar_dispositivo_json(self, dispositivo):
 
@@ -211,5 +270,5 @@ class CliObserver(Observador):
 
             writer = csv.writer(file)
             
-            writer.writerow([datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), dispositivo.id, trigger, source.lower(), dest.lower()])
+            writer.writerow([datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), dispositivo.id, dispositivo.tipo, trigger, source.lower(), dest.lower()])
 
