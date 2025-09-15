@@ -1,3 +1,32 @@
 {
-    "dispositivos": []
+  "dispositivos": [
+    {
+      "id": "camera_quarto",
+      "tipo": "camera",
+      "nome": "camera do quarto",
+      "estado": "OFF",
+      "atributos": {}
+    },
+    {
+      "id": "camera_sala",
+      "tipo": "camera",
+      "nome": "camera da sala",
+      "estado": "OFF",
+      "atributos": {}
+    },
+    {
+      "id": "irrigador_jardim",
+      "tipo": "irrigador",
+      "nome": "irrigador do jardim",
+      "estado": "DESLIGADO",
+      "atributos": {}
+    },
+    {
+      "id": "irrigador_quintal",
+      "tipo": "irrigador",
+      "nome": "irrigador do quintal",
+      "estado": "DESLIGADO",
+      "atributos": {}
+    }
+  ]
 }
