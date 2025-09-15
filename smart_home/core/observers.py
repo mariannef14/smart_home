@@ -113,7 +113,8 @@ class CliObserver(Observador):
             dispositivos_json = json.load(file)
 
         with open(file = "data/configuracao.json", mode = "w", encoding = "utf-8") as file:
-                          
+             
+            #TODO: adicionar chave com o nome dispositivos tipo o da tarefa
              lista_dispositivos = dispositivos_json.get("dispositivos")
 
              ids = [dispositivo.get("id") for dispositivo in lista_dispositivos]
@@ -161,9 +162,9 @@ class CliObserver(Observador):
                             "atributos": {}
                         }
 
-                    lista_dispositivos.append(dispositivo_dict)
+                    dispositivos_json["dispositivos"].append(dispositivo_dict)
                 
-                json.dump(lista_dispositivos, file, indent = 2)
+                json.dump(dispositivos_json, file, indent = 2)
 
 
     def _remover_dispositivo_json(self, dispositivo):
