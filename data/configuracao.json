@@ -22,11 +22,34 @@
       "atributos": {}
     },
     {
-      "id": "irrigador_quintal",
-      "tipo": "irrigador",
-      "nome": "irrigador do quintal",
-      "estado": "DESLIGADO",
+      "id": "camera_casa",
+      "tipo": "camera",
+      "nome": "camera da casa",
+      "estado": "OFF",
       "atributos": {}
+    },
+    {
+      "id": "luz_quarto",
+      "tipo": "luz",
+      "nome": "luz do quarto",
+      "estado": "Off",
+      "atributos": {
+        "brilho": 60,
+        "cor": "fria"
+      }
     }
-  ]
+  ],
+
+  "rotinas": {
+      "noite": [
+        { "id": "porta_sala", "comando": "trancar" },
+        { "id": "luz_quarto", "comando": "desligar" },
+        { "id": "persiana_quarto", "comando": "fechar" }
+      ],
+      "acordar": [
+        { "id": "luz_quarto", "comando": "ligar", "argumentos": {"brilho": 50} },
+        { "id": "persiana_quarto", "comando": "abrir", "argumentos": {"percentual_abertura": 30} },
+        { "id": "irrigador_jardim", "comando": "ligar" }
+      ]
+    }
 }
