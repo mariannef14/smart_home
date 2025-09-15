@@ -67,6 +67,10 @@ class Luz(Dispositivo):
         self._cor = value
     
 
+    def on_enter_Off(self):
+        self._brilho = 0
+    
+
     def __str__(self):
         return super().__str__() + f" | {self.state}"
 
