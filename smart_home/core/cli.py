@@ -1,10 +1,8 @@
-from smart_home.core.hub3 import Hub
+from smart_home.core.hub import Hub
 
 
-#TODO: ADICIONAR TODOS OS DISPOSITIVOS DO JSON NA LISTA ANTES DE INICIAR O PROGRAMA
-#TODO: renomear para hub e não hub3
 hub = Hub()
-hub.adicionar_dispositivos_json_list()
+hub.adicionar_dispositivos_json_in_list()
 
 while True:
     print("=== SMART HOME HUB ===")
