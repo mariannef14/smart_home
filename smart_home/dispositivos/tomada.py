@@ -35,6 +35,7 @@ class Tomada(Dispositivo):
     def __post_init__(self):
         self.machine = Machine(model = self, states = ["On", "Off"], transitions = transitions, initial = "Off", auto_transitions = False)
         self.hora_tomada_ligou = None
+        self.hora_tomada_desligou = None
         self._consumo_wh = 0
     
     
@@ -55,10 +56,10 @@ class Tomada(Dispositivo):
     def on_enter_On(self):
         self.hora_tomada_ligou = datetime.now()
 
-
+    #TODO: TESTAR SE O CALCULO TÁ FUNCIONANDO
     def on_enter_Off(self):
-        hora_tomada_desligou = datetime.now()
-        horas_ligada = ((hora_tomada_desligou - self.hora_tomada_ligou).total_seconds() / 3600)
+        self.hora_tomada_desligou = datetime.now()
+        horas_ligada = ((self.hora_tomada_desligou - self.hora_tomada_ligou).total_seconds() / 3600)
         self._consumo_wh = abs(self._potencia_w * horas_ligada)
 
 
