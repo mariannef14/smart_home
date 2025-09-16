@@ -227,6 +227,9 @@ class Hub:
         
         elif opcao == 2:
             self.tempo_luzes_ligadas()
+        
+        elif opcao == 3:
+            self.percentual_medio_persiana()
 
 
     def dispositivos_mais_usados(self):
@@ -278,6 +281,38 @@ class Hub:
                 
                 if tempo_total != 0:
                     writer.writerow({"id_dispositivo": dispositivo.get("id_dispositivo"), "tempo_total": tempo_total})
+
+
+    def percentual_medio_persiana(self):
+
+        with open(file = "data/configuracao.json", mode = "r") as file:
+            dispositivos_json = json.load(file)
+            dispositivos_persiana_json = list(filter(lambda dispositivo: dispositivo.get("tipo") == "persiana", dispositivos_json["dispositivos"]))
+            
+
+        with open(file = "data/events.csv", mode = "r") as file:
+            dispositivos = csv.DictReader(file)
+
+            dispositivos_persiana = list(filter(lambda dispositivo: dispositivo.get("tipo") == "persiana" and dispositivo.get("estado_destino") == "open", dispositivos))
+
+            porcentagens = []
+
+            for persiana_json in dispositivos_persiana_json:
+
+                for persiana_csv in dispositivos_persiana:
+
+                    if persiana_json.get("id") == persiana_csv.get("id_dispositivo"):
+                        porcentagens.append(persiana_json.get("atributos").get("percentual_abertura"))
+
+        media = sum(porcentagens) / len(porcentagens)
+
+        with open(file = "data/relatorio.csv", mode = "w", newline = "", encoding = "utf-8") as file:
+
+            cabecalho = ["percentual_medio_persiana"]
+            writer = csv.DictWriter(file, fieldnames=cabecalho)
+            writer.writeheader()
+
+            writer.writerow({"percentual_medio_persiana": media})
 
 
 
