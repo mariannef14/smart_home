@@ -38,6 +38,10 @@ class Tomada(Dispositivo):
         self._consumo_wh = 0
     
     
+    def __str__(self):
+        return super().__str__() + f" | {self.state}"
+    
+
     @property
     def potencia_w(self):
         return self._potencia_w
