@@ -69,6 +69,7 @@ class Luz(Dispositivo):
 
     def on_enter_Off(self):
         self._brilho = 0
+        self._cor = "FRIA"
     
 
     def __str__(self):
