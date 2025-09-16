@@ -1,8 +1,8 @@
-from transitions import Machine
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import List
 import json
-from collections import Counter
+import csv
 
 from smart_home.core.dispositivos import TiposDispostivos, CorEnum, StatesPorta
 from smart_home.dispositivos.porta import Porta
@@ -147,7 +147,6 @@ class Hub:
         
         try:                
             dispositivo.trigger(comando)
-            print(comando)
         except TransicaoInvalida:
             raise TransicaoInvalida("Não foi possível mudar o estado deste dispositivo. Verfique um estado possível para realizar a mudança")
 
@@ -164,8 +163,8 @@ class Hub:
                 except ValidacaoAtributo as e:
                     raise ValidacaoAtributo(e.mensagem)
             
-            self.sujeito.notificar("executar comando", dispositivo, comando)  
-            self.logger.evento(dispositivo, "executar comando", comando)
+        self.sujeito.notificar("executar comando", dispositivo, comando)  
+        self.logger.evento(dispositivo, "executar comando", comando)
 
 
     def mudar_atributos(self, argumentos, dispositivo):
@@ -217,37 +216,81 @@ class Hub:
     def gerar_relatorio(self):
 
         print("Tipos de relatórios disponíveis: ")
-        print("[1] Dispositivos mais usados")
+        print("1 - Dispositivos mais usados")
+        print("2 - Tempo total em que cada luz permaneceu ligada")
+        print("3 - Percentual médio de abertura de persianas")
 
         opcao = int(input("Escolha sua opção: "))
 
         if opcao == 1:
             self.dispositivos_mais_usados()
+        
+        elif opcao == 2:
+            self.tempo_luzes_ligadas()
 
 
     def dispositivos_mais_usados(self):
 
-        with open(file = "data/configuracao.json", mode = "r") as file:
-            dispositivos = json.load(file)
+        with open(file = "data/events.csv", mode = "r") as file:
+            dispositivos = csv.DictReader(file)
 
-            lista_dispositivos = dispositivos.get("dispositivos")
+            tipos = [dispositivo.get("tipo") for dispositivo in dispositivos]
 
-            tipos = [dispositivo.get("tipo") for dispositivo in lista_dispositivos]
+            tipos_com_quantidade = {tipo: tipos.count(tipo) for tipo in tipos}
 
-            print(sorted(Counter(tipos)))
-    
+            dispositivos_mais_usados = dict(sorted(tipos_com_quantidade.items(), key = lambda tipo: tipo[1], reverse = True))
+        
+        
+        with open(file = "data/relatorio.csv", mode = "w", newline = "", encoding = "utf-8") as file:
+
+            cabecalho = ["tipo", "quantidade"]
+            writer = csv.DictWriter(file, fieldnames=cabecalho)
+            writer.writeheader()
+
+            for tipo, quantidade in dispositivos_mais_usados.items():
+                writer.writerow({"tipo": tipo, "quantidade": quantidade})
+
+
+    def tempo_luzes_ligadas(self):
+
+        with open(file = "data/events.csv", mode = "r") as file:
+            dispositivos = csv.DictReader(file)
+
+            dispositivos_luz = list(filter(lambda dispositivo: dispositivo.get("tipo") == "luz", dispositivos))
+
+
+        with open(file = "data/relatorio.csv", mode = "w", newline = "", encoding = "utf-8") as file:
+
+            cabecalho = ["id_dispositivo", "tempo_total"]
+            writer = csv.DictWriter(file, fieldnames=cabecalho)
+            writer.writeheader()
+
+            
+            for dispositivo in dispositivos_luz:
+                
+                tempo_total = 0
+
+                if dispositivo.get("estado_origem") == "off":
+                    ligou = datetime.strptime(dispositivo.get("timestamp"), "%Y-%m-%dT%H:%M:%S")
+                else:
+                    desligou = datetime.strptime(dispositivo.get("timestamp"), "%Y-%m-%dT%H:%M:%S")
+                    tempo_total = ((desligou - ligou).total_seconds() / 3600)
+                
+                if tempo_total != 0:
+                    writer.writerow({"id_dispositivo": dispositivo.get("id_dispositivo"), "tempo_total": tempo_total})
 
 
 
 if __name__ == "__main__":
     hub = Hub()
-    hub.adicionar_dispositivos_json_list()
-    hub.adicionar_dispositivo()
+    hub.adicionar_dispositivos_json_in_list()
+    hub.gerar_relatorio()
     # hub.adicionar_dispositivo()
     # hub.adicionar_dispositivo()
     # hub.adicionar_dispositivo()
     # hub.adicionar_dispositivo()
-    hub.listar_dispositivos()
+    # hub.adicionar_dispositivo()
+    # hub.listar_dispositivos()
     # hub.mostrar_dispositivo()
     # hub.alterar_atributo()
     # hub.executar_comando()
