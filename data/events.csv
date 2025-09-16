@@ -1,11 +1,16 @@
-timestamp, id_dispositivo, tipo, evento, estado_origem, estado_destino
+timestamp,id_dispositivo,tipo,evento,estado_origem,estado_destino
 2025-09-14T19:35:00,irrigador_jardim,irrigador,ligar,desligado,ligado
 2025-09-14T19:35:32,irrigador_jardim,irrigador,ligar,desligado,ligado
 2025-09-14T19:56:57,irrigador_jardim,irrigador,ligar,desligado,ligado
 2025-09-14T19:59:22,camera_casa,camera,ligar,off,on
 2025-09-14T20:01:07,porta_quarto,porta,destrancar,trancada,destrancada
 2025-09-14T20:33:47,camera_casa,camera,ligar,off,on
-2025-09-14T21:01:55,luz_sala,luz,ligar,off,on
-2025-09-14T21:06:21,luz_sala,luz,desligar,on,off
 2025-09-14T21:54:19,persiana_sala,persiana,abrir,closed,open
 2025-09-14T21:58:37,persiana_sala,persiana,fechar,open,closed
+2025-09-15T20:43:26,luz_quarto,luz,ligar,off,on
+2025-09-15T20:45:49,luz_quarto,luz,desligar,on,off
+2025-09-15T21:27:45,tomada_tv,tomada,ligar,off,on
+2025-09-15T21:30:15,persiana_quarto,persiana,abrir,closed,open
+2025-09-15T22:52:02,porta_quarto,porta,destrancar,trancada,destrancada
+2025-09-15T23:49:58,luz_sala,luz,ligar,off,on
+2025-09-15T23:50:12,luz_sala,luz,desligar,on,off

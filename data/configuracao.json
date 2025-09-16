@@ -8,24 +8,10 @@
       "atributos": {}
     },
     {
-      "id": "camera_sala",
-      "tipo": "camera",
-      "nome": "camera da sala",
-      "estado": "OFF",
-      "atributos": {}
-    },
-    {
       "id": "irrigador_jardim",
       "tipo": "irrigador",
       "nome": "irrigador do jardim",
       "estado": "DESLIGADO",
-      "atributos": {}
-    },
-    {
-      "id": "camera_casa",
-      "tipo": "camera",
-      "nome": "camera da casa",
-      "estado": "OFF",
       "atributos": {}
     },
     {
@@ -34,22 +20,81 @@
       "nome": "luz do quarto",
       "estado": "Off",
       "atributos": {
-        "brilho": 60,
-        "cor": "fria"
+        "brilho": 0,
+        "cor": "FRIA"
+      }
+    },
+    {
+      "id": "porta_quarto",
+      "tipo": "porta",
+      "nome": "porta do quarto",
+      "estado": "TRANCADA",
+      "atributos": {}
+    },
+    {
+      "id": "tomada_tv",
+      "tipo": "tomada",
+      "nome": "tomada da tv",
+      "estado": "Off",
+      "atributos": {
+        "potencia": 330
+      }
+    },
+    {
+      "id": "persiana_quarto",
+      "tipo": "persiana",
+      "nome": "persiana do quarto",
+      "estado": "Closed",
+      "atributos": {
+        "percentual_abertura": 0
+      }
+    },
+    {
+      "id": "luz_sala",
+      "tipo": "luz",
+      "nome": "luz da sala",
+      "estado": "Off",
+      "atributos": {
+        "brilho": 0,
+        "cor": "FRIA"
       }
     }
   ],
-
   "rotinas": {
-      "noite": [
-        { "id": "porta_sala", "comando": "trancar" },
-        { "id": "luz_quarto", "comando": "desligar" },
-        { "id": "persiana_quarto", "comando": "fechar" }
-      ],
-      "acordar": [
-        { "id": "luz_quarto", "comando": "ligar", "argumentos": {"brilho": 50} },
-        { "id": "persiana_quarto", "comando": "abrir", "argumentos": {"percentual_abertura": 30} },
-        { "id": "irrigador_jardim", "comando": "ligar" }
-      ]
-    }
+    "dormir": [
+      {
+        "id": "porta_quarto",
+        "comando": "trancar"
+      },
+      {
+        "id": "luz_quarto",
+        "comando": "desligar"
+      },
+      {
+        "id": "persiana_quarto",
+        "comando": "fechar"
+      }
+    ],
+    "acordar": [
+      {
+        "id": "luz_quarto",
+        "comando": "ligar",
+        "argumentos": {
+          "brilho": 50,
+          "cor": "neutra"
+        }
+      },
+      {
+        "id": "persiana_quarto",
+        "comando": "abrir",
+        "argumentos": {
+          "percentual_abertura": 30
+        }
+      },
+      {
+        "id": "irrigador_jardim",
+        "comando": "ligar"
+      }
+    ]
+  }
 }
