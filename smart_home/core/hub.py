@@ -39,29 +39,42 @@ class Hub:
 
             if dispositivo.get("tipo") == TiposDispostivos.PORTA.value:
                 self.dispositivo = Porta(dispositivo.get("id"), dispositivo.get("nome"))
+                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
+                print(self.dispositivo.state)
 
             elif dispositivo.get("tipo") == TiposDispostivos.LUZ.value:
                 self.dispositivo = Luz(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("brilho"), dispositivo.get("atributos").get("cor"))
+                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
 
             elif dispositivo.get("tipo") == TiposDispostivos.TOMADA.value:
                 self.dispositivo = Tomada(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("potencia"))
+                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
 
             elif dispositivo.get("tipo") == TiposDispostivos.IRRIGADOR.value:
                 self.dispositivo = Irrigador(dispositivo.get("id"), dispositivo.get("nome"))
+                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
     
             elif dispositivo.get("tipo") == TiposDispostivos.PERSIANA.value:
                 self.dispositivo = Persiana(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("percentual_abertura"))
+                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
             
             elif dispositivo.get("tipo") == TiposDispostivos.CAMERA.value:
                 self.dispositivo = Camera(dispositivo.get("id"), dispositivo.get("nome"))
+                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
         
     
+    def set_state_dispositivo(self, estado_dispositivo_json, dispositivo_object):
+         
+        if (hasattr(dispositivo_object, "machine")):
+            dispositivo_object.machine.set_state(estado_dispositivo_json)
+
+
     def adicionar_dispositivo(self):
 
         print("Tipos suportados:", TiposDispostivos.all_dispositives())
