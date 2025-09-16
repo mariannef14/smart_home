@@ -1,4 +1,5 @@
 from smart_home.core.dispositivos import CorEnum
+from smart_home.core.erros import ValidacaoAtributo
 
 
 class BrilhoValidator:
@@ -13,8 +14,7 @@ class BrilhoValidator:
            setattr(instance, self.private_name, value)
         
         else:
-            #TODO: CRIAR EXCEÇÃO PERSONALIZADA(ValidacaoAtributo)
-            raise ValueError("Valor do brilho precisa estar entre 0 e 100")
+            raise ValidacaoAtributo("Valor do brilho precisa estar entre 0 e 100")
     
 
     def __set_name__(self, owner, name):
@@ -33,8 +33,7 @@ class CorValidator:
             setattr(instance, self.private_name, value)
 
         else:
-            #TODO: CRIAR EXCEÇÃO PERSONALIZADA(ValidacaoAtributo)
-            raise ValueError(f"A cor {value} não existe")
+            raise ValidacaoAtributo("Esta cor não existe")
 
 
     def __set_name__(self, owner, name):
@@ -54,8 +53,7 @@ class PorcentagemValidator:
             setattr(instance, self.private_name, value)
         
         else:
-            #TODO: CRIAR EXCEÇÃO PERSONALIZADA(ValidacaoAtributo)
-            raise ValueError("Valor da porcentagem de abertura precisa estar entre 0 e 100")
+            raise ValidacaoAtributo("Valor da porcentagem de abertura precisa estar entre 0 e 100")
 
 
     def __set_name__(self, owner, name):
@@ -74,8 +72,7 @@ class PotenciaValidator:
             setattr(instance, self.private_name, value)
         
         else:
-            #TODO: CRIAR EXCEÇÃO PERSONALIZADA(ValidacaoAtributo)
-            raise ValueError("Valor da potência deve ser maior que 0 ")
+            raise ValidacaoAtributo("Valor da potência deve ser maior que 0")
 
 
     def __set_name__(self, owner, name):
