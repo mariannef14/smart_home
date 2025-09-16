@@ -53,7 +53,6 @@ class Porta(Dispositivo):
 
             self.__tentativas_invalidas += 1
 
-        #TODO: CRIAR EXCEÇÃO PERSONALIZADA(TransicaoInvalida)
         raise MachineError(event)
     
 
