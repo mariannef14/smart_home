@@ -15,6 +15,8 @@ from smart_home.dispositivos.camera import Camera
 from smart_home.core.logger import Logger
 from smart_home.core.observers import Sujeito, CliObserver
 
+from smart_home.core.erros import ConfigInvalida, DispositivoNaoExiste, TransicaoInvalida, ValidacaoAtributo
+
 
 @dataclass
 class Hub:
@@ -26,10 +28,42 @@ class Hub:
     sujeito.adicionar_observador(observer)
     dispositivo = None
 
+
+    def adicionar_dispositivos_json_in_list(self):
+
+      with open("data/configuracao.json") as file:
+
+        dispositivos = json.load(file)
+
+        for dispositivo in dispositivos.get("dispositivos"):
+
+            if dispositivo.get("tipo") == TiposDispostivos.PORTA.value:
+                self.dispositivo = Porta(dispositivo.get("id"), dispositivo.get("nome"))
+                self.dispositivos.append(self.dispositivo)
+
+            elif dispositivo.get("tipo") == TiposDispostivos.LUZ.value:
+                self.dispositivo = Luz(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("brilho"), dispositivo.get("atributos").get("cor"))
+                self.dispositivos.append(self.dispositivo)
+
+            elif dispositivo.get("tipo") == TiposDispostivos.TOMADA.value:
+                self.dispositivo = Tomada(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("potencia"))
+                self.dispositivos.append(self.dispositivo)
+
+            elif dispositivo.get("tipo") == TiposDispostivos.IRRIGADOR.value:
+                self.dispositivo = Irrigador(dispositivo.get("id"), dispositivo.get("nome"))
+                self.dispositivos.append(self.dispositivo)
+    
+            elif dispositivo.get("tipo") == TiposDispostivos.PERSIANA.value:
+                self.dispositivo = Persiana(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("percentual_abertura"))
+                self.dispositivos.append(self.dispositivo)
+            
+            elif dispositivo.get("tipo") == TiposDispostivos.CAMERA.value:
+                self.dispositivo = Camera(dispositivo.get("id"), dispositivo.get("nome"))
+                self.dispositivos.append(self.dispositivo)
+        
     
     def adicionar_dispositivo(self):
 
-        #TODO: VERIFICAR SE O ID NÃO EXISTE, SE EXISTIR LANÇAR EXCEÇÃO
         print("Tipos suportados:", TiposDispostivos.all_dispositives())
         tipo_dispositivo = input("Tipo do dispositivo: ").upper().strip()
         id_dispositivo = input("Id (sem espacos): ").lower().strip()
@@ -74,8 +108,7 @@ class Hub:
             self.dispositivos.append(self.dispositivo)
         
         else:
-            #TODO: LANÇAR EXCEÇÃO PERSONALIZADA PARA TIPO DE DISPOSITIVO INVÁLIDO(ConfigInvalida)
-            raise ValueError
+            raise ConfigInvalida("Tipo de dispositivo inválido")
         
         self.logger.evento(self.dispositivo, "adicionar")
 
@@ -89,8 +122,7 @@ class Hub:
             if dispositivo.id == id_dispositivo.lower().strip():
                 return dispositivo
 
-        #TODO: LANÇAR EXCEÇÃO PERSONALIZADA PARA DISPOSITIVO NÃO ENCONTRADO
-        raise ValueError("Não encontrou")
+        raise DispositivoNaoExiste("Dispositivo não encontrado")
 
 
     def listar_dispositivos(self):
@@ -106,183 +138,79 @@ class Hub:
         self.dispositivos.pop(index)
 
         self.logger.evento(dispositivo, "remover")
-        self.sujeito.notificar("remover", dispositivo)
 
 
     def executar_comando(self):
 
         dispositivo = self.mostrar_dispositivo()
-        comandos_possiveis = ",".join(dispositivo.machine.get_triggers(dispositivo.state))
-        print(f"Comandos possíveis no estado atual do dispositivo -> {comandos_possiveis}")
-        comando = input("Qual comando deseja executar? ")
-        #TODO: COLOCAR BLOCO DE MUDAR DE ESTADO DENTRO DE UM TRY CATCH E LANÇAR EXCEÇÃO PERSONALIZADA(TransicaoInvalida)
+        comando = input("Qual comando deseja executar? ").lower().strip()
         
-        try:
+        try:                
             dispositivo.trigger(comando)
-            #TODO: TIRAR ESSE PRINT
-            print(dispositivo.state)
+            print(comando)
+        except TransicaoInvalida:
+            raise TransicaoInvalida("Não foi possível mudar o estado deste dispositivo. Verfique um estado possível para realizar a mudança")
+
+        
+        if comando != "desligar" and comando != "fechar":
             print("Atributos que podem ser modificados [LUZ]: brilho e cor, [PERSIANA]: porcentagem de abertura(abertura)")
             argumentos = input("Argumentos (k=v separados por espaco) ou ENTER: ")
                 
             if argumentos != "":
                 argumentos_dict = dict(argumento.split("=") for argumento in argumentos.split())
 
-                #TODO: TIRAR ESSE PRINT
-                print(argumentos_dict)
-                self.mudar_atributos(argumentos_dict, dispositivo)
-            #TODO: TIRAR ESSE PRINT
-            print(dispositivo)
+                try:
+                    self.mudar_atributos(argumentos_dict, dispositivo)
+                except ValidacaoAtributo as e:
+                    raise ValidacaoAtributo(e.mensagem)
             
-            self.logger.evento(dispositivo, "executar comando", comando)
             self.sujeito.notificar("executar comando", dispositivo, comando)  
-           
-        except:
-            #TODO: LANÇAR EXCEÇÃO PERSONALIZADA PARA ESTADO INVÁLIDO(TransicaoInvalida)
-            raise ValueError()
-        
-        # else:
-            
-        #     if dispositivo.tipo == TiposDispostivos.LUZ or dispositivo.tipo == TiposDispostivos.PERSIANA: 
-
-        #         print("Atributos que podem ser modificados [LUZ]: brilho e cor, [PERSIANA]: porcentagem de abertura(abertura)")
-        #         argumentos = input("Argumentos (k=v separados por espaco) ou ENTER: ")
-                
-        #         if argumentos != "":
-        #             argumentos_dict = dict(argumento.split("=") for argumento in argumentos.split())
-
-        #             #TODO: TIRAR ESSE PRINT
-        #             print(argumentos_dict)
-        #             self.mudar_atributos(argumentos_dict, dispositivo)
-        #         #TODO: TIRAR ESSE PRINT
-        #         print(dispositivo)
-            
-        #     self.logger.evento(dispositivo, "executar comando", comando)
-        #     self.sujeito.notificar("executar comando", dispositivo, comando)    
+            self.logger.evento(dispositivo, "executar comando", comando)
 
 
     def mudar_atributos(self, argumentos, dispositivo):
 
         if "brilho" in argumentos:
             dispositivo.definir_brilho(value = int(argumentos.get("brilho")))
-            #TODO: TIRAR ESSE PRINT
-            print(dispositivo.brilho)
         
         if "cor" in argumentos:
             dispositivo.definir_cor(value = argumentos.get("cor"))
-            #TODO: TIRAR ESSE PRINT
-            print(dispositivo.cor)
         
         if "abertura" in argumentos:
             dispositivo.definir_porcentagem_abertura(value = int(argumentos.get("abertura")))
-            #TODO: TIRAR ESSE PRINT
-            print(dispositivo.percentual_abertura)
 
 
     def alterar_atributo(self):
+        
         print("Atributos que podem ser modificados [LUZ]: brilho e cor, [PERSIANA]: porcentagem de abertura(abertura)")
+        
         dispositivo = self.mostrar_dispositivo()
 
         if dispositivo.tipo == TiposDispostivos.LUZ or dispositivo.tipo == TiposDispostivos.PERSIANA: 
 
-
             argumentos = input("Argumentos (k=v separados por espaco) ou ENTER: ")
-
 
             if argumentos != "":
                     argumentos_dict = dict(argumento.split("=") for argumento in argumentos.split())
-
-                    #TODO: TIRAR ESSE PRINT
-                    print(argumentos_dict)
                     self.mudar_atributos(argumentos_dict, dispositivo)
 
         else:
-            raise ValueError("Esse dispositivo não possui atributos que podem ser alterados")
+            raise ConfigInvalida("Esse dispositivo não possui atributos que podem ser alterados")
 
 
     def executar_rotina(self):
 
         rotina = input("Digite o tipo de rotina que deseja executar (dormir ou acordar): ").lower().strip()
-
-        for dispositivo in self.dispositivos:
-
-            if rotina == "dormir":
-
-                if isinstance(dispositivo, Porta):
-                    
-                    state_porta = dispositivo.state
-
-                    while state_porta != StatesPorta.TRANCADA:
-
-                        trigger = dispositivo.machine.get_triggers(dispositivo.state)
-                        #TODO: TIRAR ESSE PRINT
-                        print(trigger)
-                        dispositivo.trigger(trigger[0])
-                        state_porta = dispositivo.state
-                        #TODO: TIRAR ESSE PRINT
-                        print("Status: ", dispositivo.state)
-                
-                    #TODO: TIRAR ESSE PRINT
-                    print("Status final da porta:", dispositivo.state)
-                
-                if isinstance(dispositivo, Luz):
-
-                    if dispositivo.state == "On":
-                        dispositivo.desligar()
-
-                    #TODO: TIRAR ESSE PRINT
-                    print("Status final da luz:", dispositivo.state)
-                
-                if isinstance(dispositivo, Tomada):
-
-                    if dispositivo.state == "On":
-                        dispositivo.desligar()
-                    
-                    #TODO: TIRAR ESSE PRINT
-                    print("Status final da tomada:", dispositivo.state)
-
-                if isinstance(dispositivo, Persiana):
-
-                    if dispositivo.state == "Open":
-                        dispositivo.fechar()
-
-                    #TODO: TIRAR ESSE PRINT
-                    print("Status final da persiana:", dispositivo.state)
-
-
-            elif rotina == "acordar":
-                
-                if isinstance(dispositivo, Luz):
-                    dispositivo.ligar()
-                    dispositivo.definir_brilho(value = 50)
-                    #TODO: TIRAR ESSE PRINT
-                    print("Status inicial da luz:", dispositivo.state)
-
-                
-                if isinstance(dispositivo, Persiana):
-                    dispositivo.abrir()
-                    dispositivo.definir_porcentagem_abertura(value = 50)
-                    #TODO: TIRAR ESSE PRINT
-                    print("Status inicial da persiana:", dispositivo.state)
-
-                
-                if isinstance(dispositivo, Irrigador):
-                    dispositivo.ligar()
-                    #TODO: TIRAR ESSE PRINT
-                    print("Status inicial do irrigador:", dispositivo.state)
-                    dispositivo.irrigar()
-
-        else:
-            #TODO: LANÇAR EXCEÇÃO PERSONALIZADA PARA ROTINA NÃO EXISTENTE(ConfigInvalida)
-            ...
+        self.sujeito.notificar("rotina", dispositivo = self.dispositivos, trigger = rotina)
 
 
     def salvar_configuracao(self):
-        self.sujeito.notificar("adicionar", self.dispositivo)
+        self.sujeito.notificar("json", self.dispositivos)
         print("Configuração salva")
     
 
     def salvar_configuracao_lista_dispositivos(self):
-        self.sujeito.notificar("adicionar dispositivos", self.dispositivos)
+        self.sujeito.notificar("json", self.dispositivos)
         print("Saindo...")
 
 
@@ -297,7 +225,6 @@ class Hub:
             self.dispositivos_mais_usados()
 
 
-
     def dispositivos_mais_usados(self):
 
         with open(file = "data/configuracao.json", mode = "r") as file:
@@ -308,18 +235,22 @@ class Hub:
             tipos = [dispositivo.get("tipo") for dispositivo in lista_dispositivos]
 
             print(sorted(Counter(tipos)))
+    
+
+
 
 if __name__ == "__main__":
     hub = Hub()
+    hub.adicionar_dispositivos_json_list()
     hub.adicionar_dispositivo()
     # hub.adicionar_dispositivo()
     # hub.adicionar_dispositivo()
     # hub.adicionar_dispositivo()
     # hub.adicionar_dispositivo()
-    # hub.listar_dispositivos()
+    hub.listar_dispositivos()
     # hub.mostrar_dispositivo()
     # hub.alterar_atributo()
-    hub.executar_comando()
+    # hub.executar_comando()
     # hub.executar_comando()
     # hub.remover_dispositivo()
     # hub.executar_rotina()
