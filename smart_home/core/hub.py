@@ -4,7 +4,7 @@ from typing import List
 import json
 import csv
 
-from smart_home.core.dispositivos import TiposDispostivos, CorEnum, StatesPorta
+from smart_home.core.dispositivos import TiposDispostivos, CorEnum
 from smart_home.dispositivos.porta import Porta
 from smart_home.dispositivos.luz import Luz
 from smart_home.dispositivos.tomada import Tomada
@@ -39,37 +39,37 @@ class Hub:
 
             if dispositivo.get("tipo") == TiposDispostivos.PORTA.value:
                 self.dispositivo = Porta(dispositivo.get("id"), dispositivo.get("nome"))
-                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
+                self._set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
                 print(self.dispositivo.state)
 
             elif dispositivo.get("tipo") == TiposDispostivos.LUZ.value:
                 self.dispositivo = Luz(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("brilho"), dispositivo.get("atributos").get("cor"))
-                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
+                self._set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
 
             elif dispositivo.get("tipo") == TiposDispostivos.TOMADA.value:
                 self.dispositivo = Tomada(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("potencia"))
-                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
+                self._set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
 
             elif dispositivo.get("tipo") == TiposDispostivos.IRRIGADOR.value:
                 self.dispositivo = Irrigador(dispositivo.get("id"), dispositivo.get("nome"))
-                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
+                self._set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
     
             elif dispositivo.get("tipo") == TiposDispostivos.PERSIANA.value:
                 self.dispositivo = Persiana(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("percentual_abertura"))
-                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
+                self._set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
             
             elif dispositivo.get("tipo") == TiposDispostivos.CAMERA.value:
                 self.dispositivo = Camera(dispositivo.get("id"), dispositivo.get("nome"))
-                self.set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
+                self._set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
         
     
-    def set_state_dispositivo(self, estado_dispositivo_json, dispositivo_object):
+    def _set_state_dispositivo(self, estado_dispositivo_json, dispositivo_object):
          
         if (hasattr(dispositivo_object, "machine")):
             dispositivo_object.machine.set_state(estado_dispositivo_json)
@@ -172,7 +172,7 @@ class Hub:
                 argumentos_dict = dict(argumento.split("=") for argumento in argumentos.split())
 
                 try:
-                    self.mudar_atributos(argumentos_dict, dispositivo)
+                    self._mudar_atributos(argumentos_dict, dispositivo)
                 except ValidacaoAtributo as e:
                     raise ValidacaoAtributo(e.mensagem)
             
@@ -180,7 +180,7 @@ class Hub:
         self.logger.evento(dispositivo, "executar comando", comando)
 
 
-    def mudar_atributos(self, argumentos, dispositivo):
+    def _mudar_atributos(self, argumentos, dispositivo):
 
         if "brilho" in argumentos:
             dispositivo.definir_brilho(value = int(argumentos.get("brilho")))
@@ -204,7 +204,7 @@ class Hub:
 
             if argumentos != "":
                     argumentos_dict = dict(argumento.split("=") for argumento in argumentos.split())
-                    self.mudar_atributos(argumentos_dict, dispositivo)
+                    self._mudar_atributos(argumentos_dict, dispositivo)
 
         else:
             raise ConfigInvalida("Esse dispositivo não possui atributos que podem ser alterados")
@@ -236,16 +236,16 @@ class Hub:
         opcao = int(input("Escolha sua opção: "))
 
         if opcao == 1:
-            self.dispositivos_mais_usados()
+            self._dispositivos_mais_usados()
         
         elif opcao == 2:
-            self.tempo_luzes_ligadas()
+            self._tempo_luzes_ligadas()
         
         elif opcao == 3:
-            self.percentual_medio_persiana()
+            self._percentual_medio_persiana()
 
 
-    def dispositivos_mais_usados(self):
+    def _dispositivos_mais_usados(self):
 
         with open(file = "data/events.csv", mode = "r") as file:
             dispositivos = csv.DictReader(file)
@@ -267,7 +267,7 @@ class Hub:
                 writer.writerow({"tipo": tipo, "quantidade": quantidade})
 
 
-    def tempo_luzes_ligadas(self):
+    def _tempo_luzes_ligadas(self):
 
         with open(file = "data/events.csv", mode = "r") as file:
             dispositivos = csv.DictReader(file)
@@ -296,7 +296,7 @@ class Hub:
                     writer.writerow({"id_dispositivo": dispositivo.get("id_dispositivo"), "tempo_total": tempo_total})
 
 
-    def percentual_medio_persiana(self):
+    def _percentual_medio_persiana(self):
 
         with open(file = "data/configuracao.json", mode = "r") as file:
             dispositivos_json = json.load(file)
