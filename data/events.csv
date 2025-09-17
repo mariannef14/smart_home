@@ -12,3 +12,12 @@ timestamp,id_dispositivo,tipo,evento,estado_origem,estado_destino
 2025-09-15T23:50:12,luz_sala,luz,desligar,on,off
 2025-09-16T07:52:40,persiana_quarto,persiana,abrir,closed,open
 2025-09-16T07:53:12,persiana_cozinha,persiana,abrir,closed,open
+2025-09-16T19:25:44,tomada_tv,tomada,ligar,off,on
+2025-09-16T19:27:01,luz_sala,luz,ligar,off,on
+2025-09-16T19:27:38,tomada_tv,tomada,desligar,on,off
+2025-09-16T19:29:21,tomada_tv,tomada,ligar,off,on
+2025-09-16T19:29:32,tomada_tv,tomada,desligar,on,off
+2025-09-16T19:37:26,tomada_ventilador,tomada,ligar,off,on
+2025-09-16T19:37:40,tomada_ventilador,tomada,desligar,on,off
+2025-09-16T19:52:04,porta_quarto,porta,destrancar,trancada,destrancada
+2025-09-16T20:29:52,luz_quarto,luz,ligar,off,on
