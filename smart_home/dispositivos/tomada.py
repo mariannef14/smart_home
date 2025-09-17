@@ -56,7 +56,6 @@ class Tomada(Dispositivo):
     def on_enter_On(self):
         self.hora_tomada_ligou = datetime.now()
 
-    #TODO: TESTAR SE O CALCULO TÁ FUNCIONANDO
     def on_enter_Off(self):
         self.hora_tomada_desligou = datetime.now()
         horas_ligada = ((self.hora_tomada_desligou - self.hora_tomada_ligou).total_seconds() / 3600)

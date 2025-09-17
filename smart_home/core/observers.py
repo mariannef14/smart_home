@@ -1,4 +1,3 @@
-# Observer (console/arquivo)
 from abc import ABC, abstractmethod
 import csv
 import json
@@ -149,20 +148,13 @@ class CliObserver(Observador):
             writer.writerow([datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), dispositivo.id, dispositivo.tipo, trigger, source.lower(), dest.lower()])
 
         
-        #TODO: TENTAR FAZER ISSO EM RELATÓRIO 
-        # OU PUXAR ESSE ARQUIVO QUANDO DIGITAR 3(SÓ FUNCIONA SE LIGAR E DESLIGAR A TOMADA NA MESMA EXECUÇÃO DO CÓDIGO) SOMA TODOS OS CONSUMOS
         if dispositivo.tipo == TiposDispostivos.TOMADA and dispositivo.state == "Off":
-            print(dispositivo.hora_tomada_desligou)
-            print(dispositivo.hora_tomada_ligou)
-            print(dispositivo.consumo_wh)
-                
+         
             with open(file = "data/tomada_events.csv", mode = "a", newline = "", encoding = "utf-8") as file:
 
                 writer = csv.writer(file)
             
-                #id_dispositivo,total_wh,inicio_periodo,fim_periodo
-                #tomada_tv,240,2025-09-01T00:00:00,2025-09-01T23:59:59
-                writer.writerow([dispositivo.id, dispositivo.consumo_w, dispositivo.hora_tomada_ligou, dispositivo.hora_tomada_desligou])
+                writer.writerow([dispositivo.id, dispositivo.consumo_wh, dispositivo.hora_tomada_ligou, dispositivo.hora_tomada_desligou])
 
 
 
