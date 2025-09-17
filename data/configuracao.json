@@ -1,13 +1,6 @@
 {
   "dispositivos": [
     {
-      "id": "camera_quarto",
-      "tipo": "camera",
-      "nome": "camera do quarto",
-      "estado": "OFF",
-      "atributos": {}
-    },
-    {
       "id": "irrigador_jardim",
       "tipo": "irrigador",
       "nome": "irrigador do jardim",
@@ -50,13 +43,22 @@
       }
     },
     {
+      "id": "tomada_ventilador",
+      "tipo": "tomada",
+      "nome": "tomada do ventilador",
+      "estado": "Off",
+      "atributos": {
+        "potencia": 220
+      }
+    },
+    {
       "id": "luz_sala",
       "tipo": "luz",
       "nome": "luz da sala",
       "estado": "Off",
       "atributos": {
-        "brilho": 0,
-        "cor": "FRIA"
+        "brilho": 45,
+        "cor": "neutra"
       }
     }
   ],
