@@ -3,6 +3,9 @@ from datetime import datetime
 from typing import List
 import json
 import csv
+from functools import reduce
+from transitions import MachineError
+from collections import Counter
 
 from smart_home.core.dispositivos import TiposDispostivos, CorEnum
 from smart_home.dispositivos.porta import Porta
@@ -41,7 +44,6 @@ class Hub:
                 self.dispositivo = Porta(dispositivo.get("id"), dispositivo.get("nome"))
                 self._set_state_dispositivo(dispositivo.get("estado"), self.dispositivo)
                 self.dispositivos.append(self.dispositivo)
-                print(self.dispositivo.state)
 
             elif dispositivo.get("tipo") == TiposDispostivos.LUZ.value:
                 self.dispositivo = Luz(dispositivo.get("id"), dispositivo.get("nome"), dispositivo.get("atributos").get("brilho"), dispositivo.get("atributos").get("cor"))
@@ -160,7 +162,7 @@ class Hub:
         
         try:                
             dispositivo.trigger(comando)
-        except TransicaoInvalida:
+        except MachineError:
             raise TransicaoInvalida("Não foi possível mudar o estado deste dispositivo. Verfique um estado possível para realizar a mudança")
 
         
@@ -182,14 +184,18 @@ class Hub:
 
     def _mudar_atributos(self, argumentos, dispositivo):
 
-        if "brilho" in argumentos:
-            dispositivo.definir_brilho(value = int(argumentos.get("brilho")))
-        
-        if "cor" in argumentos:
-            dispositivo.definir_cor(value = argumentos.get("cor"))
-        
-        if "abertura" in argumentos:
-            dispositivo.definir_porcentagem_abertura(value = int(argumentos.get("abertura")))
+        try:
+            if "brilho" in argumentos:
+                dispositivo.definir_brilho(value = int(argumentos.get("brilho")))
+            
+            if "cor" in argumentos:
+                dispositivo.definir_cor(value = argumentos.get("cor"))
+            
+            if "abertura" in argumentos:
+                dispositivo.definir_porcentagem_abertura(value = int(argumentos.get("abertura")))
+
+        except MachineError:
+            raise TransicaoInvalida("Não foi possível mudar o estado deste dispositivo. Verfique um estado possível para realizar a mudança")
 
 
     def alterar_atributo(self):
@@ -228,10 +234,15 @@ class Hub:
 
     def gerar_relatorio(self):
 
+        print()
         print("Tipos de relatórios disponíveis: ")
         print("1 - Dispositivos mais usados")
         print("2 - Tempo total em que cada luz permaneceu ligada")
         print("3 - Percentual médio de abertura de persianas")
+        print("4 - Consumo por tomada inteligente")
+        print("5 - Distribuição de comandos por tipo de dispositivo")
+        print()
+
 
         opcao = int(input("Escolha sua opção: "))
 
@@ -243,6 +254,12 @@ class Hub:
         
         elif opcao == 3:
             self._percentual_medio_persiana()
+        
+        elif opcao == 4:
+            self._consumo_tomada_inteligente()
+        
+        elif opcao == 5:
+            self._comandos_por_tipo()
 
 
     def _dispositivos_mais_usados(self):
@@ -328,6 +345,47 @@ class Hub:
             writer.writerow({"percentual_medio_persiana": media})
 
 
+    def _consumo_tomada_inteligente(self):
+
+        with open("data/tomada_events.csv") as file:
+            dispositivos = csv.DictReader(file)
+        
+            consumo_tomadas = list(map(lambda dispositivo: dispositivo.get("total_wh"), dispositivos))
+        
+
+        consumo_total = reduce(lambda consumo_tomada_1, consumo_tomada_2: consumo_tomada_1 + consumo_tomada_2, consumo_tomadas)
+
+
+        with open(file = "data/relatorio.csv", mode = "w", newline = "", encoding = "utf-8") as file:
+
+            cabecalho = ["consumo_tomada_inteligente"]
+            writer = csv.DictWriter(file, fieldnames=cabecalho)
+            writer.writeheader()
+
+            writer.writerow({"consumo_tomada_inteligente": consumo_total})
+
+
+    def _comandos_por_tipo(self):
+
+         with open(file = "data/events.csv", mode = "r") as file:
+
+            dispositivos = csv.DictReader(file)
+           
+            comando_tipo = [(dispositivo["tipo"], dispositivo["evento"]) for dispositivo in dispositivos]
+            contagem = Counter(comando_tipo)
+
+
+            with open(file = "data/relatorio.csv", mode = "w", newline = "", encoding = "utf-8") as file:
+
+                cabecalho = ["tipo_dispositivo", "evento", "quantidade"]
+                writer = csv.DictWriter(file, fieldnames=cabecalho)
+                writer.writeheader()
+
+
+                for (tipo, evento), quantidade in contagem.items():
+                    writer.writerow({"tipo_dispositivo": tipo, "evento": evento, "quantidade": quantidade})
+
+        
 
 if __name__ == "__main__":
     hub = Hub()
